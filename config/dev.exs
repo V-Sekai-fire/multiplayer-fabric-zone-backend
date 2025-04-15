@@ -21,7 +21,11 @@ config :phoenix, :plug_init_mode, :runtime
 config :uro, Uro.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
+<<<<<<< HEAD
   url: System.get_env("DATABASE_URL"),
+=======
+  url: nil,
+>>>>>>> b303d3a (using one join table)
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
