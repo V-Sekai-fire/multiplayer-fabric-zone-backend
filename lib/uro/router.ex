@@ -85,7 +85,6 @@ defmodule Uro.Router do
       pipe_through([:authenticated_user])
       get("/", Uro.UserController, :showCurrent)
     end
-    end
 
     ##################################
 
