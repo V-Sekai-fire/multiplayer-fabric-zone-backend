@@ -6,7 +6,14 @@ alias Uro.Config.Helpers
 config :uro, Uro.Endpoint,
   debug_errors: true,
   code_reloader: true,
-  check_origin: false
+  check_origin: false,
+  live_reload: [
+    patterns: [
+      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/gettext/.*(po)$",
+      ~r"lib/uro_web/(controllers|live|components)/.*(ex|heex)$"
+    ]
+  ]
 
 config :uro, Uro.Mailer, adapter: Swoosh.Adapters.Local
 
@@ -21,11 +28,7 @@ config :phoenix, :plug_init_mode, :runtime
 config :uro, Uro.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
-<<<<<<< HEAD
-  url: System.get_env("DATABASE_URL"),
-=======
   url: nil,
->>>>>>> b303d3a (using one join table)
   username: "postgres",
   password: "postgres",
   hostname: "localhost",

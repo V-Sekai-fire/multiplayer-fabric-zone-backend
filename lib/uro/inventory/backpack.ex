@@ -1,11 +1,9 @@
 defmodule Uro.Inventory.Backpack do
   alias Uro.Accounts.User
-  import Ecto.Changeset
   use Ecto.Schema
 
   defmodule Join do
     use Ecto.Schema
-    import Ecto.Query
 
     schema "backpack_join" do
       belongs_to :backpack, Uro.Inventory.Backpack
