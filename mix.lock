@@ -18,7 +18,6 @@
   "email_checker": {:hex, :email_checker, "0.1.4", "6c9914039277da0810107e229ffc28c09b09af7663bfa1f85268fdb4ddc8f174", [:mix], [{:socket, "~> 0.3.1", [hex: :socket, repo: "hexpm", optional: false]}], "hexpm", "5f35d5d4ee3c8a789e92c4dd7916e1c1744c4ceb9a9661ae1b17a7a71fe9e5aa"},
   "escape": {:hex, :escape, "0.4.0", "3cf80059da1d499bc82fa6480215360c461dc216d7d52dc054f72eb1449f2c9e", [:mix], [], "hexpm", "b29918ba0741e429c6cc9af7c8792fe6f5a2ad7d35b6f5e88d56c670401c3a61"},
   "ex_json_schema": {:hex, :ex_json_schema, "0.7.4", "09eb5b0c8184e5702bc89625a9d0c05c7a0a845d382e9f6f406a0fc1c9a8cc3f", [:mix], [], "hexpm", "45c67fa840f0d719a2b5578126dc29bcdc1f92499c0f61bcb8a3bcb5935f9684"},
-  "ex_marcel": {:hex, :ex_marcel, "0.1.0", "61116a255ed51e8d9ec65cb0018442bf37cadb2228d3bb90e3bbb6d3d11dcd34", [:mix], [], "hexpm", "48dfc497435a9c52c0e90c1e07d8ce7316a095dcec0e04d182e8250e493b72fb"},
   "ex_phone_number": {:hex, :ex_phone_number, "0.4.5", "2065cc48c3e9d1ed9821f50877c32f2f6898362cb990f44147ca217c5d1374ed", [:mix], [{:sweet_xml, "~> 0.7", [hex: :sweet_xml, repo: "hexpm", optional: false]}], "hexpm", "67163f8706f8cbfef1b1f4b9230c461f19786d0d79fd0b22cbeeefc6f0b99d4a"},
   "expo": {:hex, :expo, "1.1.0", "f7b9ed7fb5745ebe1eeedf3d6f29226c5dd52897ac67c0f8af62a07e661e5c75", [:mix], [], "hexpm", "fbadf93f4700fb44c331362177bdca9eeb8097e8b0ef525c9cc501cb9917c960"},
   "file_system": {:hex, :file_system, "1.1.0", "08d232062284546c6c34426997dd7ef6ec9f8bbd090eb91780283c9016840e8f", [:mix], [], "hexpm", "bfcf81244f416871f2a2e15c1b515287faa5db9c6bcf290222206d120b3d43f6"},
