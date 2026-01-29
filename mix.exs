@@ -18,12 +18,14 @@ defmodule Uro.MixProject do
     ]
   end
 
-
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [{:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}]
+    [
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
