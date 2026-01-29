@@ -57,9 +57,10 @@ defmodule Uro.Helpers.Validation do
     end
   end
 
+  @spec generate_file_sha256(Path.t()) :: String.t()
   def generate_file_sha256(file_path) do
-    # 4KB chunks
-    file_stream = File.stream!(file_path, [], 4096)
+    # 4KB byte chunks (second arg is byte count for streaming)
+    file_stream = File.stream!(file_path, 4096)
 
     hash =
       Enum.reduce(file_stream, :crypto.hash_init(:sha256), fn chunk, acc ->

@@ -7,7 +7,14 @@ defmodule Uro.MixProject do
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        paths: [
+          "_build/dev/lib/uro_api/ebin",
+          "_build/dev/lib/uro_web/ebin"
+        ],
+        ignore_warnings: ".dialyzer_ignore.exs"
+      ]
     ]
   end
 
@@ -19,7 +26,7 @@ defmodule Uro.MixProject do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    []
+    [{:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

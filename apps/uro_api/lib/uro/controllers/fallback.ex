@@ -4,6 +4,7 @@ defmodule Uro.FallbackController do
 
   See `Phoenix.Controller.action_fallback/1` for more details.
   """
+  @dialyzer {:nowarn_function, open_api_operation: 1}
 
   use Uro, :controller
 

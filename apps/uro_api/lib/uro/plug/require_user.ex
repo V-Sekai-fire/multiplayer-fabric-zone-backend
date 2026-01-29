@@ -5,7 +5,7 @@ defmodule Uro.Plug.RequireUser do
   def init(options), do: options
 
   @doc false
-  @spec call(Conn.t(), any()) :: Conn.t()
+  @spec call(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def call(conn, _opts) do
     conn
     |> Uro.Helpers.User.is_session_user?()

@@ -1,9 +1,11 @@
 defmodule Uro.IdentityProofController do
+  @dialyzer {:nowarn_function, open_api_operation: 1}
+
   use Uro, :controller
 
   alias Uro.Error
 
-  @spec create(Conn.t(), map()) :: Conn.t()
+  @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, %{"identity_proof" => identity_proof_params}) do
     if !Map.has_key?(identity_proof_params, "user_to") do
       conn

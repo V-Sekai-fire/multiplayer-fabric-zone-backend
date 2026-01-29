@@ -5,7 +5,7 @@ defmodule Uro.Plug.RequirePropUploadPermission do
   def init(options), do: options
 
   @doc false
-  @spec call(Conn.t(), atom()) :: Conn.t()
+  @spec call(Plug.Conn.t(), atom()) :: Plug.Conn.t()
   def call(conn, handler) do
     conn
     |> Uro.Helpers.UserContentHelper.session_has_prop_upload_permission?()

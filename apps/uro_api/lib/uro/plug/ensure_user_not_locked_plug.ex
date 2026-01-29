@@ -1,8 +1,7 @@
 # lib/my_app_web/ensure_user_not_locked_plug.ex
 defmodule Uro.EnsureUserNotLockedPlug do
-  alias Plug.Conn
   alias Pow.Config
-  alias Pow.Plug
+  alias Pow.Plug, as: PowPlug
 
   @doc false
   @spec init(Config.t()) :: atom()
@@ -11,10 +10,10 @@ defmodule Uro.EnsureUserNotLockedPlug do
   end
 
   @doc false
-  @spec call(Conn.t(), any()) :: Conn.t()
+  @spec call(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def call(conn, handler) do
     conn
-    |> Plug.current_user()
+    |> PowPlug.current_user()
     |> locked?()
     |> maybe_halt(conn, handler)
   end
@@ -24,9 +23,9 @@ defmodule Uro.EnsureUserNotLockedPlug do
 
   defp maybe_halt(true, conn, handler) do
     conn
-    |> Plug.delete()
+    |> PowPlug.delete()
     |> handler.call(:account_locked)
-    |> Conn.halt()
+    |> Plug.Conn.halt()
   end
 
   defp maybe_halt(_any, conn, _handler), do: conn

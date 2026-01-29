@@ -163,6 +163,7 @@ defmodule Uro.Pow.RedisCache do
     end
   end
 
+  @dialyzer {:nowarn_function, all: 2}
   @impl true
   def all(config, key_match) do
     compiled_match_spec = :ets.match_spec_compile([{{key_match, :_}, [], [:"$_"]}])
