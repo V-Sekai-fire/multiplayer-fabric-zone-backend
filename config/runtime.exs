@@ -18,17 +18,18 @@ require Logger
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :uro, Uro.Endpoint, server: true
+  config :uro_api, Uro.Endpoint, server: true
+  config :uro_web, UroWeb.Endpoint, server: true
 end
 
-config :uro, Uro.Turnstile,
+config :uro_api, Uro.Turnstile,
   secret_key:
     System.get_env("TURNSTILE_SECRET_KEY") ||
       Logger.warning(
         "Turnstile (a reCaptcha alternative) is disabled because the environment variable TURNSTILE_SECRET_KEY is not set. For more information, see https://developers.cloudflare.com/turnstile/get-started/."
       )
 
-config :uro, :pow_assent,
+config :uro_api, :pow_assent,
   user_identities_context: Uro.UserIdentities,
   providers:
     System.get_env()
@@ -55,7 +56,7 @@ config :uro, :pow_assent,
     end)
 
 if config_env() == :prod do
-  config :uro, Uro.Mailer,
+  config :uro_api, Uro.Mailer,
     adapter: Swoosh.Adapters.Sendgrid,
     api_key: System.get_env("SENDGRID_API_KEY", "")
 
@@ -72,7 +73,7 @@ if config_env() == :prod do
     default_signer:
       System.get_env("JOKEN_SIGNER") || raise("Joken Signer (JOKEN_SIGNER) must be set")
 
-  config :uro, Uro.Repo,
+  config :uro_api, Uro.Repo,
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
@@ -91,11 +92,12 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "vsekai.local"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  api_port = String.to_integer(System.get_env("API_PORT") || "4000")
+  web_port = String.to_integer(System.get_env("WEB_PORT") || "4001")
 
-  config :uro, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
+  config :uro_api, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
-  config :uro, Uro.Endpoint,
+  config :uro_api, Uro.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -103,7 +105,15 @@ if config_env() == :prod do
       # See the documentation on https://hexdocs.pm/bandit/Bandit.html#t:options/0
       # for details about using IPv6 vs IPv4 and loopback vs public addresses.
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
-      port: port
+      port: api_port
+    ],
+    secret_key_base: secret_key_base
+
+  config :uro_web, UroWeb.Endpoint,
+    url: [host: host, port: 443, scheme: "https"],
+    http: [
+      ip: {0, 0, 0, 0, 0, 0, 0, 0},
+      port: web_port
     ],
     secret_key_base: secret_key_base
 

@@ -1,6 +1,6 @@
 import Config
 
-config :uro, Uro.Repo,
+config :uro_api, Uro.Repo,
   show_sensitive_data_on_connection_error: true,
   url: System.get_env("TEST_DATABASE_URL"),
   username: "vsekai",

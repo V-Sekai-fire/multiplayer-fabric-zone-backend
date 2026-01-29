@@ -3,31 +3,11 @@ defmodule Uro.MixProject do
 
   def project do
     [
-      app: :uro,
+      apps_path: "apps",
       version: "0.1.0",
-      elixir: "~> 1.17 or ~> 1.19",
-      elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
-    ]
-  end
-
-  # Configuration for the OTP application.
-  #
-  # Type `mix help compile.app` for more information.
-  def application do
-    [
-      mod: {Uro.Application, []},
-      extra_applications: [
-        :logger,
-        :runtime_tools,
-        :email_checker,
-        :mnesia,
-        :scrivener_ecto,
-        :httpoison
-      ]
     ]
   end
 
@@ -39,53 +19,7 @@ defmodule Uro.MixProject do
   #
   # Type `mix help deps` for examples and options.
   defp deps do
-    [
-      {:phoenix, "~> 1.7"},
-      {:phoenix_pubsub, "~> 2.0"},
-      {:phoenix_ecto, "~> 4.4"},
-      {:phoenix_live_view, "~> 1.0.0"},
-      {:phoenix_view, "~> 2.0"},
-      {:phoenix_html, "~> 3.3"},
-      {:phoenix_live_reload, "~> 1.5", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.8.3"},
-      {:floki, ">= 0.30.0", only: :test},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
-      {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.1.1",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
-      {:swoosh, "~> 1.5"},
-      {:ecto_sql, "~> 3.11"},
-      {:redix, "~> 0.9.2"},
-      {:postgrex, ">= 0.0.0"},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:gettext, "~> 0.18"},
-      {:hackney, "~> 1.17"},
-      {:httpoison, "~> 2.0"},
-      {:jason, "~> 1.2"},
-      {:joken, "~> 2.6"},
-      {:bandit, "~> 1.0"},
-      {:plug_static_index_html, "~> 1.0"},
-      {:comeonin, "~> 5.3.2"},
-      {:bcrypt_elixir, "~> 2.3"},
-      {:pow, "~> 1.0"},
-      {:email_checker, "~> 0.1.4"},
-      {:pow_assent, "~> 0.4.18"},
-      {:ssl_verify_fun, "~> 1.1.6"},
-      {:open_api_spex, "~> 3.18"},
-      {:ex_json_schema, "~> 0.7.4"},
-      {:remote_ip, "~> 1.0"},
-      {:waffle, "~> 1.1"},
-      {:waffle_ecto, "~> 0.0.10"},
-      {:ecto_commons, "~> 0.3.4"},
-      {:hammer, "~> 6.0"},
-      {:scrivener_ecto, "~> 2.7"},
-      {:ex_marcel, "~> 0.1.0"}
-    ]
+    []
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -118,10 +52,10 @@ defmodule Uro.MixProject do
       end,
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind uro", "esbuild uro"],
+      "assets.build": ["tailwind uro_web", "esbuild uro_web"],
       "assets.deploy": [
-        "tailwind uro --minify",
-        "esbuild uro --minify",
+        "tailwind uro_web --minify",
+        "esbuild uro_web --minify",
         "phx.digest"
       ]
     ]

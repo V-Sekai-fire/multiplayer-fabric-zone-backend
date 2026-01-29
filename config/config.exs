@@ -6,7 +6,7 @@ config :hammer,
 
 config :esbuild,
   version: "0.25.0",
-  uro: [
+  uro_web: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -15,7 +15,7 @@ config :esbuild,
 
 config :tailwind,
   version: "4.0.9",
-  uro: [
+  uro_web: [
     args: ~w(
 		--input=css/app.css
 		--output=../priv/static/assets/app.css
@@ -23,10 +23,10 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
-config :uro,
+config :uro_api,
   ecto_repos: [Uro.Repo]
 
-config :uro, Uro.Repo,
+config :uro_api, Uro.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL") || "postgresql://vsekai:vsekai@database:5432/vsekai",
   username: "postgres",
@@ -38,11 +38,20 @@ config :uro, Uro.Repo,
   pool_size: 10,
   migration_lock: false
 
-config :uro, Redix, url: System.get_env("REDIS_URL") || "redis://redis:6379"
+config :uro_api, Redix, url: System.get_env("REDIS_URL") || "redis://redis:6379"
 
-config :uro, Uro.Endpoint,
+config :uro_api, Uro.Endpoint,
   adapter: Bandit.PhoenixAdapter,
-  url: [host: "localhost"],
+  url: [host: "localhost", port: 4000],
+  pubsub_server: Uro.PubSub,
+  render_errors: [
+    formats: [json: Uro.ErrorJSON],
+    layout: false
+  ]
+
+config :uro_web, UroWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
+  url: [host: "localhost", port: 4001],
   pubsub_server: Uro.PubSub,
   render_errors: [
     formats: [html: UroWeb.ErrorHTML, json: UroWeb.ErrorJSON],
@@ -58,7 +67,7 @@ config :uro, :stale_shard_cutoff,
 
 config :uro, :stale_shard_interval, 30 * 24 * 60 * 60 * 1000
 
-config :uro, :pow,
+config :uro_api, :pow,
   user: Uro.Accounts.User,
   users_context: Uro.Accounts,
   repo: Uro.Repo,
@@ -68,7 +77,7 @@ config :uro, :pow,
   routes_backend: Uro.Pow.Routes,
   cache_store_backend: Uro.Pow.RedisCache
 
-config :uro, :pow_assent, user_identities_context: Uro.UserIdentities
+config :uro_api, :pow_assent, user_identities_context: Uro.UserIdentities
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
