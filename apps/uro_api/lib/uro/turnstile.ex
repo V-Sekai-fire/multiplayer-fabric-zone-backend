@@ -7,7 +7,7 @@ defmodule Uro.Turnstile do
 
   @verification_url "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
-  def config(), do: Application.get_env(:uro, Uro.Turnstile)
+  def config(), do: Application.get_env(:uro_api, Uro.Turnstile)
   def config(key), do: Keyword.get(config(), key)
 
   # https://developers.cloudflare.com/turnstile/get-started/server-side-validation/#error-codes

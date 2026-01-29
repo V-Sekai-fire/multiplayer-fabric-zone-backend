@@ -61,11 +61,11 @@ config :uro_web, UroWeb.Endpoint,
 
 config :joken, default_signer: "gqawCOER09ZZjaN8W2QM9XT9BeJSZ9qc"
 
-config :uro, :stale_shard_cutoff,
+config :uro_api, :stale_shard_cutoff,
   amount: 3,
   calendar_type: "month"
 
-config :uro, :stale_shard_interval, 30 * 24 * 60 * 60 * 1000
+config :uro_api, :stale_shard_interval, 30 * 24 * 60 * 60 * 1000
 
 config :uro_api, :pow,
   user: Uro.Accounts.User,

@@ -20,7 +20,7 @@ defmodule Uro.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext.Backend, otp_app: :uro
+  use Gettext.Backend, otp_app: :uro_api
 end
 
 # TODO(benbot) migrate Uro to UroWeb where needed
@@ -46,5 +46,5 @@ defmodule UroWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext.Backend, otp_app: :uro
+  use Gettext.Backend, otp_app: :uro_api
 end

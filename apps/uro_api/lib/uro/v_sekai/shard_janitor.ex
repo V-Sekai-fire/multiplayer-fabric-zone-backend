@@ -19,7 +19,7 @@ defmodule Uro.VSekai.ShardJanitor do
   end
 
   defp cleanup_stale_shards() do
-    stale_shard_cutoff = Application.get_env(:uro, :stale_shard_cutoff)
+    stale_shard_cutoff = Application.get_env(:uro_api, :stale_shard_cutoff)
 
     query =
       from s in "shards",
@@ -34,6 +34,6 @@ defmodule Uro.VSekai.ShardJanitor do
   defp schedule_cleanup() do
     # every 3 days
     # 3 * 24 * 60 * 60 * 1000)
-    Process.send_after(self(), :cleanup, Application.get_env(:uro, :stale_shard_interval))
+    Process.send_after(self(), :cleanup, Application.get_env(:uro_api, :stale_shard_interval))
   end
 end

@@ -1,5 +1,5 @@
 defmodule Uro.Mailer do
-  use Swoosh.Mailer, otp_app: :uro
+  use Swoosh.Mailer, otp_app: :uro_api
 
   import Swoosh.Email
   require Logger
@@ -7,7 +7,7 @@ defmodule Uro.Mailer do
   alias Uro.Accounts.User
 
   defp get_adapter() do
-    if Application.get_env(:uro, Uro.Mailer)[:adapter] == Swoosh.Adapters.Sendgrid do
+    if Application.get_env(:uro_api, Uro.Mailer)[:adapter] == Swoosh.Adapters.Sendgrid do
       case System.get_env("SENDGRID_API_KEY") do
         nil ->
           Logger.warning("SENDGRID_API_KEY not found. Falling back to mail Logger")
@@ -18,10 +18,10 @@ defmodule Uro.Mailer do
           Swoosh.Adapters.Logger
 
         _ ->
-          Application.get_env(:uro, Uro.Mailer)[:adapter]
+          Application.get_env(:uro_api, Uro.Mailer)[:adapter]
       end
     else
-      Application.get_env(:uro, Uro.Mailer)[:adapter]
+      Application.get_env(:uro_api, Uro.Mailer)[:adapter]
     end
   end
 
@@ -53,7 +53,7 @@ defmodule Uro.Mailer do
 
   def confirmation_email(confirmation_token) when is_binary(confirmation_token) do
     confirmation_url =
-      "#{Application.get_env(:uro, :frontend_url)}confirm-email/#{confirmation_token}"
+      "#{Application.get_env(:uro_api, :frontend_url)}confirm-email/#{confirmation_token}"
 
     create_email(
       subject: "Confirm your email address",
