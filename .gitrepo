@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/V-Sekai-fire/multiplayer-fabric-zone-backend.git
+	branch = benbot/backpack-inventory
+	commit = da5c5dc4094cb8ebeaaf3fc45b6c189bd1ba6a23
+	parent = 4ab2dc684401c237d961ec24f43febd0e1811b87
+	cmdver = 0.1.0
