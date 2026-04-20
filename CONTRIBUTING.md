@@ -27,7 +27,9 @@ still green.
   do not alter it.  Fixes to a broken migration require a new
   migration.  Every migration must include a `down/0` that reverts it
   cleanly.
-- **Commit every green.** One commit per feature or fix cycle.
+- **Commit every green.** One commit per feature or fix cycle.  Messages
+  use sentence case; do not use Conventional Commits prefixes (`feat:`,
+  `fix:`, `chore:`, etc.).
 
 ## Workflow
 
