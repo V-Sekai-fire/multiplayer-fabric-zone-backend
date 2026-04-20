@@ -13,7 +13,7 @@ defmodule Uro.Application do
           Uro.Repo,
           Uro.Endpoint,
           Uro.VSekai.ShardJanitor,
-          {Redix, {Application.get_env(:uro, Redix)[:url], [name: :redix]}},
+          Uro.Pow.DetsCache,
           {Phoenix.PubSub, [name: Uro.PubSub, adapter: Phoenix.PubSub.PG2]},
           ExMarcel.TableWrapper,
 

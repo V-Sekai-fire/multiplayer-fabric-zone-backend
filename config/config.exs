@@ -61,7 +61,6 @@ config :uro, Uro.Repo,
   pool_size: 10,
   migration_lock: false
 
-config :uro, Redix, url: Helpers.get_env("REDIS_URL", "redis://redis:6379")
 
 config :uro, Uro.Endpoint,
   adapter: Bandit.PhoenixAdapter,
@@ -119,7 +118,7 @@ config :uro, :pow,
   extensions: [PowPersistentSession],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   routes_backend: Uro.Pow.Routes,
-  cache_store_backend: Uro.Pow.RedisCache
+  cache_store_backend: Uro.Pow.DetsCache
 
 config :uro, :pow_assent,
   user_identities_context: Uro.UserIdentities,
