@@ -20,17 +20,15 @@ Integration tests require a running stack (`docker compose up -d` in
 `multiplayer-fabric-hosting/`) and these env vars:
 
 ```sh
-URO_BASE_URL=https://hub-700a.chibifire.com
-URO_EMAIL=operator@example.com
-URO_PASSWORD=<password>
-ZONE_SERVER_URL=https://zone-700a.chibifire.com
-ZONE_CERT_PIN=<SHA-256 fingerprint>
-TEST_SCENE_PATH=../multiplayer-fabric-humanoid-project/humanoid/scenes/mire.tscn
+DATABASE_URL=postgresql://root@localhost:26257/vsekai?sslmode=disable
 AWS_S3_BUCKET=uro-uploads
 AWS_S3_ENDPOINT=http://localhost:7070
 AWS_ACCESS_KEY_ID=minioadmin
 AWS_SECRET_ACCESS_KEY=minioadmin
 ```
+
+(Zone-console client env vars — `URO_BASE_URL`, `URO_EMAIL`, `ZONE_CERT_HASH_B64`,
+etc. — belong in `multiplayer-fabric-zone-console/AGENTS.md`.)
 
 ## Red-green-refactor
 
@@ -52,6 +50,22 @@ The TDD arc must be legible in `git log`.
   ```sh
   mix ecto.gen.migration <name>
   ```
+  Then add the SPDX header manually (the generator does not add it and the
+  pre-commit hook will reject the file without it — see SPDX requirement below).
+
+## SPDX requirement
+
+Every new first-party `.ex` or `.exs` file must contain both of these lines
+in the first 2 KB:
+
+```elixir
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
+```
+
+This is enforced by `scripts/check_spdx.py` via the pre-commit hook. Files
+missing either line will block the commit. Generated files (`mix ecto.gen.migration`,
+`mix phx.gen.*`) need the header added manually before staging.
 
 ## Asset implementation cycles
 
