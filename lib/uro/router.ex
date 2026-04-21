@@ -120,8 +120,6 @@ defmodule Uro.Router do
 
   resources("/shards", Uro.ShardController, only: [:index, :create, :update, :delete])
 
-  get("/zones", Uro.ZoneController, :index)
-
   scope "/admin" do
     pipe_through([:authenticated_admin])
 
