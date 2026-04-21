@@ -1,4 +1,4 @@
-defmodule Uro.VSekai.Shard do
+defmodule Uro.VSekai.Zone do
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -17,7 +17,7 @@ defmodule Uro.VSekai.Shard do
              :max_users
            ]}
 
-  schema "shards" do
+  schema "zones" do
     belongs_to(:user, Uro.Accounts.User, foreign_key: :user_id, type: :binary_id)
 
     field(:address, :string)
@@ -33,7 +33,7 @@ defmodule Uro.VSekai.Shard do
   end
 
   @json_schema %Schema{
-    title: "Shard",
+    title: "Zone",
     type: :object,
     required: [
       :id,
@@ -65,20 +65,20 @@ defmodule Uro.VSekai.Shard do
 
   def json_schema, do: @json_schema
 
-  def to_json_schema(%__MODULE__{} = shard) do
+  def to_json_schema(%__MODULE__{} = zone) do
     %{
-      user:      User.to_limited_json_schema(shard.user),
-      address:   to_string(shard.address),
-      port:      shard.port,
-      map:       to_string(shard.map),
-      name:      to_string(shard.name),
-      cert_hash: shard.cert_hash || ""
+      user:      User.to_limited_json_schema(zone.user),
+      address:   to_string(zone.address),
+      port:      zone.port,
+      map:       to_string(zone.map),
+      name:      to_string(zone.name),
+      cert_hash: zone.cert_hash || ""
     }
   end
 
   @doc false
-  def changeset(shard, attrs) do
-    shard
+  def changeset(zone, attrs) do
+    zone
     |> cast(attrs, [:user_id, :address, :port, :map, :name, :current_users, :max_users, :cert_hash])
     |> validate_required([:address, :port, :map, :name])
   end

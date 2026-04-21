@@ -12,7 +12,7 @@ defmodule Uro.Application do
         else: [
           Uro.Repo,
           Uro.Endpoint,
-          Uro.VSekai.ShardJanitor,
+          Uro.VSekai.ZoneJanitor,
           Uro.Pow.DetsCache,
           {Phoenix.PubSub, [name: Uro.PubSub, adapter: Phoenix.PubSub.PG2]},
           ExMarcel.TableWrapper,

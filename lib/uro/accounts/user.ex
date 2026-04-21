@@ -85,7 +85,7 @@ defmodule Uro.Accounts.User do
       join_keys: [user_id: :id, friend_id: :id]
     )
 
-    has_many(:hosted_shards, Uro.VSekai.Shard, foreign_key: :user_id)
+    has_many(:hosted_zones, Uro.VSekai.Zone, foreign_key: :user_id)
 
     has_many(:identity_proofs_from, Uro.UserRelations.IdentityProof, foreign_key: :user_from_id)
     has_many(:identity_proofs_to, Uro.UserRelations.IdentityProof, foreign_key: :user_to_id)

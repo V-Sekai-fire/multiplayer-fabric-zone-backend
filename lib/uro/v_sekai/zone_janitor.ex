@@ -1,4 +1,4 @@
-defmodule Uro.VSekai.ShardJanitor do
+defmodule Uro.VSekai.ZoneJanitor do
   use GenServer
   alias Uro.Repo
   import Ecto.Query, only: [from: 2]
@@ -13,27 +13,25 @@ defmodule Uro.VSekai.ShardJanitor do
   end
 
   def handle_info(:cleanup, state) do
-    cleanup_stale_shards()
+    cleanup_stale_zones()
     schedule_cleanup()
     {:noreply, state}
   end
 
-  defp cleanup_stale_shards() do
-    stale_shard_cutoff = Application.get_env(:uro, :stale_shard_cutoff)
+  defp cleanup_stale_zones() do
+    stale_zone_cutoff = Application.get_env(:uro, :stale_shard_cutoff)
 
     query =
-      from s in "shards",
+      from z in "zones",
         where:
-          s.updated_at >
-            from_now(^stale_shard_cutoff[:amount], ^stale_shard_cutoff[:calendar_type]),
-        select: s.id
+          z.updated_at >
+            from_now(^stale_zone_cutoff[:amount], ^stale_zone_cutoff[:calendar_type]),
+        select: z.id
 
     Repo.delete_all(query)
   end
 
   defp schedule_cleanup() do
-    # every 3 days
-    # 3 * 24 * 60 * 60 * 1000)
     Process.send_after(self(), :cleanup, Application.get_env(:uro, :stale_shard_interval))
   end
 end

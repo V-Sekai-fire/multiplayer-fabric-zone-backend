@@ -1,12 +1,12 @@
-defmodule Uro.ShardController do
+defmodule Uro.ZoneController do
   use Uro, :controller
 
   alias OpenApiSpex.Schema
   alias Uro.Repo
   alias Uro.VSekai
-  alias Uro.VSekai.Shard
+  alias Uro.VSekai.Zone
 
-  tags(["shards"])
+  tags(["zones"])
 
   def ensure_has_address(conn, params) do
     if !Map.has_key?(params, "address") do
@@ -24,14 +24,14 @@ defmodule Uro.ShardController do
     end
   end
 
-  def can_connection_modify_shard(conn, shard) do
-    if shard.user != nil and
+  def can_connection_modify_zone(conn, zone) do
+    if zone.user != nil and
          Uro.Helpers.Auth.signed_in?(conn) and
-         shard.user == Uro.Helpers.Auth.get_current_user(conn) do
+         zone.user == Uro.Helpers.Auth.get_current_user(conn) do
       true
     else
-      if shard.user == nil and
-           shard.address == to_string(:inet_parse.ntoa(conn.remote_ip)) do
+      if zone.user == nil and
+           zone.address == to_string(:inet_parse.ntoa(conn.remote_ip)) do
         true
       else
         false
@@ -40,36 +40,36 @@ defmodule Uro.ShardController do
   end
 
   operation(:index,
-    operation_id: "listShards",
-    summary: "List Shards",
+    operation_id: "listZones",
+    summary: "List Zones",
     responses: [
       ok: {
         "",
         "application/json",
         %Schema{
           type: :array,
-          items: Shard.json_schema()
+          items: Zone.json_schema()
         }
       }
     ]
   )
 
   def index(conn, _params) do
-    shards = VSekai.list_fresh_shards()
-    shards_json = Enum.map(shards, fn x -> Shard.to_json_schema(x) end)
+    zones = VSekai.list_fresh_zones()
+    zones_json = Enum.map(zones, fn x -> Zone.to_json_schema(x) end)
 
     conn
     |> put_status(200)
-    |> json(%{data: %{shards: shards_json}})
+    |> json(%{data: %{shards: zones_json}})
   end
 
   operation(:create,
-    operation_id: "createShard",
-    summary: "Create Shard",
+    operation_id: "createZone",
+    summary: "Create Zone",
     request_body: {
       "",
       "application/json",
-      Shard.json_schema()
+      Zone.json_schema()
     },
     responses: [
       ok: {
@@ -88,21 +88,17 @@ defmodule Uro.ShardController do
     ]
   )
 
-  def create(conn, shard_params) do
-    shard_params =
-      ensure_has_address(
-        conn,
-        shard_params
-      )
+  def create(conn, zone_params) do
+    zone_params = ensure_has_address(conn, zone_params)
 
     conn
-    |> ensure_user_is_current_user_or_nil(shard_params)
-    |> VSekai.create_shard()
+    |> ensure_user_is_current_user_or_nil(zone_params)
+    |> VSekai.create_zone()
     |> case do
-      {:ok, shard} ->
+      {:ok, zone} ->
         conn
         |> put_status(200)
-        |> json(%{data: %{id: to_string(shard.id)}})
+        |> json(%{data: %{id: to_string(zone.id)}})
 
       {:error, %Ecto.Changeset{}} ->
         json_error(conn)
@@ -110,8 +106,8 @@ defmodule Uro.ShardController do
   end
 
   operation(:update,
-    operation_id: "updateShard",
-    summary: "Update Shard",
+    operation_id: "updateZone",
+    summary: "Update Zone",
     parameters: [
       id: [
         in: :path,
@@ -124,20 +120,20 @@ defmodule Uro.ShardController do
       ok: {
         "",
         "application/json",
-        Shard.json_schema()
+        Zone.json_schema()
       }
     ]
   )
 
-  def update(conn, %{"id" => id, "shard" => shard_params}) do
-    shard = VSekai.get_shard!(id)
+  def update(conn, %{"id" => id, "shard" => zone_params}) do
+    zone = VSekai.get_zone!(id)
 
-    if can_connection_modify_shard(conn, shard) do
-      case VSekai.update_shard(shard, shard_params) do
-        {:ok, shard} ->
+    if can_connection_modify_zone(conn, zone) do
+      case VSekai.update_zone(zone, zone_params) do
+        {:ok, zone} ->
           conn
           |> put_status(200)
-          |> json(%{data: %{id: to_string(shard.id)}})
+          |> json(%{data: %{id: to_string(zone.id)}})
 
         {:error, %Ecto.Changeset{}} ->
           json_error(conn)
@@ -152,8 +148,8 @@ defmodule Uro.ShardController do
   end
 
   operation(:delete,
-    operation_id: "deleteShard",
-    summary: "Delete Shard",
+    operation_id: "deleteZone",
+    summary: "Delete Zone",
     parameters: [
       id: [
         in: :path,
@@ -172,18 +168,18 @@ defmodule Uro.ShardController do
   )
 
   def delete(conn, %{"id" => id}) do
-    shard =
-      Uro.VSekai.Shard
+    zone =
+      Uro.VSekai.Zone
       |> Repo.get!(id)
       |> Repo.preload(:user)
       |> Repo.preload(user: [:user_privilege_ruleset])
 
-    if can_connection_modify_shard(conn, shard) do
-      case VSekai.delete_shard(shard) do
-        {:ok, shard} ->
+    if can_connection_modify_zone(conn, zone) do
+      case VSekai.delete_zone(zone) do
+        {:ok, zone} ->
           conn
           |> put_status(200)
-          |> json(%{data: %{id: to_string(shard.id)}})
+          |> json(%{data: %{id: to_string(zone.id)}})
 
         {:error, %Ecto.Changeset{}} ->
           json_error(conn)
