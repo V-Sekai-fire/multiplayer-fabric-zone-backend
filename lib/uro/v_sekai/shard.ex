@@ -27,6 +27,7 @@ defmodule Uro.VSekai.Shard do
 
     field(:current_users, :integer, default: 0)
     field(:max_users, :integer, default: 32)
+    field(:cert_hash, :string)
 
     timestamps()
   end
@@ -77,7 +78,7 @@ defmodule Uro.VSekai.Shard do
   @doc false
   def changeset(shard, attrs) do
     shard
-    |> cast(attrs, [:user_id, :address, :port, :map, :name, :current_users, :max_users])
+    |> cast(attrs, [:user_id, :address, :port, :map, :name, :current_users, :max_users, :cert_hash])
     |> validate_required([:address, :port, :map, :name])
   end
 end
