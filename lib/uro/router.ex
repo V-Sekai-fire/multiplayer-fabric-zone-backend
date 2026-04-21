@@ -72,6 +72,7 @@ defmodule Uro.Router do
 
   pipe_through([:api])
 
+  get("/", Uro.HealthController, :index)
   get("/health", Uro.HealthController, :index)
 
   get("/openapi", OpenApiSpex.Plug.RenderSpec, [])
