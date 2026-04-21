@@ -132,6 +132,7 @@ defmodule Uro.Router do
     end
 
     get "/:id", Uro.StorageController, :show
+    post "/:id/manifest", Uro.StorageController, :manifest
 
     ################## Auth ##################
     pipe_through([:authenticated_shared_file])
@@ -140,6 +141,7 @@ defmodule Uro.Router do
     post "/", Uro.StorageController, :create
     put "/:id", Uro.StorageController, :update
     delete "/:id", Uro.StorageController, :delete
+    post "/:id/bake", Uro.StorageController, :bake
   end
 
   scope "/users" do

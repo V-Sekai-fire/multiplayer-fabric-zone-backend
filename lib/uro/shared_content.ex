@@ -175,6 +175,12 @@ defmodule Uro.SharedContent do
     Repo.delete(shared_file)
   end
 
+  def set_baked_url(%SharedFile{} = shared_file, baked_url) do
+    shared_file
+    |> SharedFile.bake_changeset(%{baked_url: baked_url})
+    |> Repo.update()
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking file changes.
 

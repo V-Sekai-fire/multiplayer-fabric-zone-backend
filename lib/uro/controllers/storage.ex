@@ -226,6 +226,33 @@ defmodule Uro.StorageController do
     ]
   )
 
+  def manifest(conn, %{"id" => id}) do
+    case SharedContent.get_shared_file!(id) do
+      %Uro.SharedContent.SharedFile{} = f ->
+        json(conn, %{data: %{
+          store_url: f.store_url,
+          chunks:    f.chunks || [],
+          baked_url: f.baked_url
+        }})
+      _ ->
+        conn |> put_status(404) |> json(%{error: "not found"})
+    end
+  end
+
+  def bake(conn, %{"id" => id, "baked_url" => baked_url}) do
+    case SharedContent.get_shared_file!(id) do
+      %Uro.SharedContent.SharedFile{} = f ->
+        case SharedContent.set_baked_url(f, baked_url) do
+          {:ok, updated} ->
+            json(conn, %{data: %{id: to_string(updated.id)}})
+          {:error, changeset} ->
+            {:error, changeset}
+        end
+      _ ->
+        conn |> put_status(404) |> json(%{error: "not found"})
+    end
+  end
+
   def delete(conn, %{"id" => id}) do
     case SharedContent.get_shared_file!(id) do
       %Uro.SharedContent.SharedFile{} = sharedFile ->
