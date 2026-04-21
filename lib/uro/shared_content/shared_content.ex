@@ -67,6 +67,7 @@ defmodule Uro.SharedContent.SharedContent do
       }
 
       def json_schema(), do: @json_schema
+      defoverridable json_schema: 0
 
       @spec shared_content_changeset(Ecto.Schema.t() | Changeset.t(), map()) :: Changeset.t()
       def shared_content_changeset(changeset, attrs) do

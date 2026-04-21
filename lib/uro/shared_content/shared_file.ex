@@ -4,9 +4,36 @@ defmodule Uro.SharedContent.SharedFile do
   import Ecto.Changeset
   use Uro.SharedContent.SharedContent
 
+  alias OpenApiSpex.Schema
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   @derive {Phoenix.Param, key: :id}
+  @asset_pipeline_properties %{
+    store_url: %Schema{
+      type: :string,
+      nullable: true,
+      description: "Raw upload location in VersityGW"
+    },
+    chunks: %Schema{
+      type: :array,
+      items: %Schema{type: :object},
+      nullable: true,
+      description: "casync chunk descriptors [{hash, offset, length}]"
+    },
+    baked_url: %Schema{
+      type: :string,
+      nullable: true,
+      description:
+        "casync .caidx index URL in VersityGW; null until the baker container completes"
+    }
+  }
+
+  def json_schema do
+    base = super()
+    %{base | properties: Map.merge(base.properties, @asset_pipeline_properties)}
+  end
+
   schema "shared_files" do
     shared_content_fields()
 

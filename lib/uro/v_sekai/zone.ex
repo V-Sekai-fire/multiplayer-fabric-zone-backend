@@ -37,30 +37,19 @@ defmodule Uro.VSekai.Zone do
   @json_schema %Schema{
     title: "Zone",
     type: :object,
-    required: [
-      :id,
-      :username,
-      :display_name
-    ],
+    required: [:address, :port, :map, :name],
     properties: %{
       user: User.json_schema(),
-      address: %Schema{
-        type: :string
-      },
-      port: %Schema{
-        type: :integer
-      },
-      map: %Schema{
-        type: :string
-      },
-      name: %Schema{
-        type: :string
-      },
-      current_users: %Schema{
-        type: :integer
-      },
-      max_users: %Schema{
-        type: :integer
+      address: %Schema{type: :string, description: "Hostname or IP of the zone server"},
+      port: %Schema{type: :integer, description: "UDP port (pool: 7443–7542)"},
+      map: %Schema{type: :string},
+      name: %Schema{type: :string},
+      current_users: %Schema{type: :integer},
+      max_users: %Schema{type: :integer},
+      cert_hash: %Schema{
+        type: :string,
+        description:
+          "Base64-encoded SHA-256 fingerprint of the zone server's self-signed TLS certificate. Pin this value when opening a WebTransport connection."
       }
     }
   }
