@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Gettext do
   @moduledoc """
   A module providing Internationalization with a gettext-based API.
@@ -20,5 +22,5 @@ defmodule Uro.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :uro
+  use Gettext.Backend, otp_app: :uro
 end

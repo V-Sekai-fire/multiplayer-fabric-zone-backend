@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications

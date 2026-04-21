@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Uploaders.SharedContentData do
   use Waffle.Definition
   use Waffle.Ecto.Definition
@@ -8,8 +10,8 @@ defmodule Uro.Uploaders.SharedContentData do
 
   # Whitelist file extensions:
   def validate({file, _}) do
-    file_extension = file.file_name |> Path.extname() |> String.downcase()
-    # with true <- Enum.member?(@extension_whitelist, file_extension),
+    _file_extension = file.file_name |> Path.extname() |> String.downcase()
+    # with true <- Enum.member?(@extension_whitelist, _file_extension),
     with true <- Validation.check_magic_number(file), do: true, else: (_ -> false)
   end
 

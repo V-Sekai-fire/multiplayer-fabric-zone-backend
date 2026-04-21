@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.MapController do
   use Uro, :controller
 
@@ -35,7 +37,7 @@ defmodule Uro.MapController do
     })
   end
 
-  operation(:indexUploads,
+  operation(:index_uploads,
     operation_id: "listMapsUploads",
     summary: "List Maps uploaded by logged in user",
     responses: [
@@ -47,7 +49,7 @@ defmodule Uro.MapController do
     ]
   )
 
-  def indexUploads(conn, _params) do
+  def index_uploads(conn, _params) do
     user = Uro.Helpers.Auth.get_current_user(conn)
     maps = UserContent.list_maps_uploaded_by(user)
 
@@ -100,7 +102,7 @@ defmodule Uro.MapController do
     end
   end
 
-  operation(:showUpload,
+  operation(:show_upload,
     operation_id: "getMapUpload",
     summary: "Get uploaded Map",
     responses: [
@@ -112,7 +114,7 @@ defmodule Uro.MapController do
     ]
   )
 
-  def showUpload(conn, %{"id" => id}) do
+  def show_upload(conn, %{"id" => id}) do
     user = Uro.Helpers.Auth.get_current_user(conn)
 
     case UserContent.get_map_uploaded_by_user!(id, user) do

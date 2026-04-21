@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.SharedContent.SharedFile do
   import Ecto.Changeset
   use Uro.SharedContent.SharedContent
@@ -9,7 +11,7 @@ defmodule Uro.SharedContent.SharedFile do
     shared_content_fields()
 
     field :store_url, :string
-    field :chunks,    {:array, :map}
+    field :chunks, {:array, :map}
     field :baked_url, :string
 
     timestamps(inserted_at: :created_at)

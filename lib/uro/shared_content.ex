@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.SharedContent do
   @moduledoc """
   The Content context.
@@ -142,26 +144,42 @@ defmodule Uro.SharedContent do
   end
 
   defp spawn_baker(%SharedFile{id: id}) do
-    id_str      = to_string(id)
-    uro_url     = System.get_env("URO_URL", "http://zone-backend:4000")
-    gw_url      = System.get_env("VERSITYGW_URL", System.get_env("AWS_S3_ENDPOINT", "http://versitygw:7070"))
+    id_str = to_string(id)
+    uro_url = System.get_env("URO_URL", "http://zone-backend:4000")
+
+    gw_url =
+      System.get_env("VERSITYGW_URL", System.get_env("AWS_S3_ENDPOINT", "http://versitygw:7070"))
+
     baker_token = System.get_env("BAKER_TOKEN", "")
-    access_key  = System.get_env("AWS_ACCESS_KEY_ID", "minioadmin")
-    secret_key  = System.get_env("AWS_SECRET_ACCESS_KEY", "minioadmin")
-    network     = System.get_env("BAKER_NETWORK", "multiplayer-fabric-hosting_default")
+    access_key = System.get_env("AWS_ACCESS_KEY_ID", "minioadmin")
+    secret_key = System.get_env("AWS_SECRET_ACCESS_KEY", "minioadmin")
+    network = System.get_env("BAKER_NETWORK", "multiplayer-fabric-hosting_default")
 
     Task.start(fn ->
-      {output, code} = System.cmd("docker", [
-        "run", "--rm",
-        "--network", network,
-        "-e", "ASSET_ID=#{id_str}",
-        "-e", "URO_URL=#{uro_url}",
-        "-e", "VERSITYGW_URL=#{gw_url}",
-        "-e", "BAKER_TOKEN=#{baker_token}",
-        "-e", "AWS_ACCESS_KEY_ID=#{access_key}",
-        "-e", "AWS_SECRET_ACCESS_KEY=#{secret_key}",
-        "multiplayer-fabric-godot-baker:latest"
-      ], stderr_to_stdout: true)
+      {output, code} =
+        System.cmd(
+          "docker",
+          [
+            "run",
+            "--rm",
+            "--network",
+            network,
+            "-e",
+            "ASSET_ID=#{id_str}",
+            "-e",
+            "URO_URL=#{uro_url}",
+            "-e",
+            "VERSITYGW_URL=#{gw_url}",
+            "-e",
+            "BAKER_TOKEN=#{baker_token}",
+            "-e",
+            "AWS_ACCESS_KEY_ID=#{access_key}",
+            "-e",
+            "AWS_SECRET_ACCESS_KEY=#{secret_key}",
+            "multiplayer-fabric-godot-baker:latest"
+          ],
+          stderr_to_stdout: true
+        )
 
       if code != 0 do
         require Logger

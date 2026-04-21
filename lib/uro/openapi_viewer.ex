@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.OpenAPI.Viewer do
   @moduledoc """
   A Plug that renders the OpenAPI spec as an interactive API documentation page.

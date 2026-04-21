@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Turnstile do
   @moduledoc """
   https://developers.cloudflare.com/turnstile/get-started/server-side-validation/

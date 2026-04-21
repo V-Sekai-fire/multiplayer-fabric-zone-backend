@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Plug.RequireAdmin do
   import Plug.Conn
 
@@ -8,7 +10,7 @@ defmodule Uro.Plug.RequireAdmin do
   @spec call(Conn.t(), atom()) :: Conn.t()
   def call(conn, handler) do
     conn
-    |> Uro.Helpers.Admin.is_session_admin?()
+    |> Uro.Helpers.Admin.session_admin?()
     |> maybe_halt(conn, handler)
   end
 

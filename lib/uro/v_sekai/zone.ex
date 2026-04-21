@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.VSekai.Zone do
   use Ecto.Schema
 
@@ -67,11 +69,11 @@ defmodule Uro.VSekai.Zone do
 
   def to_json_schema(%__MODULE__{} = zone) do
     %{
-      user:      User.to_limited_json_schema(zone.user),
-      address:   to_string(zone.address),
-      port:      zone.port,
-      map:       to_string(zone.map),
-      name:      to_string(zone.name),
+      user: User.to_limited_json_schema(zone.user),
+      address: to_string(zone.address),
+      port: zone.port,
+      map: to_string(zone.map),
+      name: to_string(zone.name),
       cert_hash: zone.cert_hash || ""
     }
   end
@@ -79,7 +81,16 @@ defmodule Uro.VSekai.Zone do
   @doc false
   def changeset(zone, attrs) do
     zone
-    |> cast(attrs, [:user_id, :address, :port, :map, :name, :current_users, :max_users, :cert_hash])
+    |> cast(attrs, [
+      :user_id,
+      :address,
+      :port,
+      :map,
+      :name,
+      :current_users,
+      :max_users,
+      :cert_hash
+    ])
     |> validate_required([:address, :port, :map, :name])
   end
 end

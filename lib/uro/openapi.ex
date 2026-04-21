@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.OpenAPI.Specification do
   @moduledoc """
   OpenAPI spec for the Uro API.

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.FallbackController do
   @moduledoc """
   Translates controller action results into valid `Plug.Conn` responses.

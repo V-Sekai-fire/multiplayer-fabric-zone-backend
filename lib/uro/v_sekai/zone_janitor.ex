@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.VSekai.ZoneJanitor do
   use GenServer
   alias Uro.Repo

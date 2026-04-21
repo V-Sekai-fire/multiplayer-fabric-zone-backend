@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.UserRelations.IdentityProof do
   @derive {Jason.Encoder, only: [:user_from, :user_to]}
   use Ecto.Schema

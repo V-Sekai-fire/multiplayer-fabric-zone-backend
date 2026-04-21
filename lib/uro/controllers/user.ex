@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.UserController do
   @moduledoc false
 
@@ -53,7 +55,7 @@ defmodule Uro.UserController do
     end
   end
 
-  operation(:showCurrent,
+  operation(:show_current,
     operation_id: "getUserCurrent",
     summary: "Get Current User",
     parameters: [
@@ -76,7 +78,7 @@ defmodule Uro.UserController do
     ]
   )
 
-  def showCurrent(conn, _params) do
+  def show_current(conn, _params) do
     with {:ok, user} <- user_from_key(conn, "me") do
       ruleset = UserPrivilegeRuleset.to_json_schema(user.user_privilege_ruleset)
 
@@ -179,7 +181,7 @@ defmodule Uro.UserController do
     end
   end
 
-  operation(:createClient,
+  operation(:create_client,
     operation_id: "signupClient",
     summary: "Create an Account from Game client request",
     responses: [
@@ -196,7 +198,7 @@ defmodule Uro.UserController do
     ]
   )
 
-  def createClient(conn, %{"user" => user_params, "apiKey" => api_key}) do
+  def create_client(conn, %{"user" => user_params, "apiKey" => api_key}) do
     create_params = %{
       "username" => Map.get(user_params, "username"),
       "display_name" => Map.get(user_params, "username"),
@@ -206,9 +208,10 @@ defmodule Uro.UserController do
 
     Repo.transaction(fn ->
       with :ok <-
-             (if api_key == System.get_env("SIGNUP_API_KEY"),
+             if(api_key == System.get_env("SIGNUP_API_KEY"),
                do: :ok,
-               else: {:error, :insufficient_permission}),
+               else: {:error, :insufficient_permission}
+             ),
            {:ok, user} <- Accounts.create(create_params),
            :ok <- Accounts.send_confirmation_email(user),
            conn <- Pow.Plug.create(conn, user) do
@@ -254,7 +257,7 @@ defmodule Uro.UserController do
     with {:ok, current_user} <- current_user(conn),
          {:ok, user} <- user_from_key(conn, user_id),
          true <-
-           User.admin?(current_user) or user.id == current_user.id ||
+           (User.admin?(current_user) or user.id == current_user.id) ||
              {
                :error,
                :unauthorized,
@@ -426,7 +429,7 @@ defmodule Uro.UserController do
          {:ok, self} <- user_confirmed_email(self),
          {:ok, user} <- user_from_key(conn, user_id),
          true <-
-           User.admin?(self) or user.id == self.id ||
+           (User.admin?(self) or user.id == self.id) ||
              {
                :error,
                :unauthorized,

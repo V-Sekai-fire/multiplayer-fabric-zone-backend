@@ -1,3 +1,6 @@
+alias Uro.Accounts.User
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 # Script for populating the database. You can run it as:
 #
 #     mix run priv/repo/test_seeds.exs
@@ -9,11 +12,8 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-
-alias Uro.Repo
-alias Uro.Accounts.User
 alias Uro.Accounts.UserPrivilegeRuleset
-
+alias Uro.Repo
 current_time = DateTime.utc_now()
 
 # Start a single transaction for all database seed operations
@@ -36,6 +36,7 @@ Repo.transaction(fn ->
         })
         |> User.confirm_email_changeset()
         |> Repo.insert!()
+
       user ->
         user
         |> User.confirm_email_changeset()
@@ -44,6 +45,7 @@ Repo.transaction(fn ->
 
   # Ensure normal user privileges exist
   normal_user_privileges_params = %{user_id: normal_user.id}
+
   UserPrivilegeRuleset
   |> Repo.get_by(user_id: normal_user.id)
   |> case do
@@ -70,6 +72,7 @@ Repo.transaction(fn ->
         })
         |> User.confirm_email_changeset()
         |> Repo.insert!()
+
       user ->
         user
         |> User.confirm_email_changeset()
@@ -85,6 +88,7 @@ Repo.transaction(fn ->
     can_upload_props: true,
     can_upload_shared_files: true
   }
+
   UserPrivilegeRuleset
   |> Repo.get_by(user_id: admin_user.id)
   |> case do

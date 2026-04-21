@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Config.Helpers do
   @compile_phase? System.get_env("COMPILE_PHASE") != "false"
 

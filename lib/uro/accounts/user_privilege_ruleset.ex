@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Accounts.UserPrivilegeRuleset do
   @moduledoc """
   A user's privilege ruleset, defining what they can do.

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 import Config
 require Logger
 
@@ -66,7 +68,11 @@ crdb_ssl =
 
 config :uro, Uro.Repo,
   adapter: Ecto.Adapters.Postgres,
-  url: Helpers.get_env("DATABASE_URL", "postgresql://vsekai:vsekai@database:26257/vsekai?sslmode=disable"),
+  url:
+    Helpers.get_env(
+      "DATABASE_URL",
+      "postgresql://vsekai:vsekai@database:26257/vsekai?sslmode=disable"
+    ),
   username: "vsekai",
   password: "vsekai",
   hostname: "localhost",
@@ -77,7 +83,6 @@ config :uro, Uro.Repo,
   pool_size: 10,
   migration_lock: false,
   ssl: crdb_ssl
-
 
 config :uro, Uro.Endpoint,
   adapter: Bandit.PhoenixAdapter,

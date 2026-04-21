@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.IdentityProofController do
   use Uro, :controller
 
@@ -5,11 +7,7 @@ defmodule Uro.IdentityProofController do
 
   @spec create(Conn.t(), map()) :: Conn.t()
   def create(conn, %{"identity_proof" => identity_proof_params}) do
-    if !Map.has_key?(identity_proof_params, "user_to") do
-      conn
-      |> put_status(500)
-      |> json(%{error: %{status: 500, message: "No recipiant for identity_proof"}})
-    else
+    if Map.has_key?(identity_proof_params, "user_to") do
       user_from = conn.assigns[:current_user]
       user_to = Uro.Accounts.get_user!(Map.get(identity_proof_params, "user_to"))
 
@@ -34,6 +32,10 @@ defmodule Uro.IdentityProofController do
         |> put_status(500)
         |> json(%{error: %{status: 500, message: "Recipiant id invalid"}})
       end
+    else
+      conn
+      |> put_status(500)
+      |> json(%{error: %{status: 500, message: "No recipiant for identity_proof"}})
     end
   end
 

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Router do
   use Uro, :router
   use Plug.ErrorHandler
@@ -19,7 +21,6 @@ defmodule Uro.Router do
     plug(:fetch_session)
 
     plug(RemoteIp)
-    plug(Uro.Plug.ClerkAuthentication)
     plug(Uro.Plug.Authentication, otp_app: :uro)
 
     plug(OpenApiSpex.Plug.PutApiSpec, module: Uro.OpenAPI.Specification)
@@ -80,16 +81,16 @@ defmodule Uro.Router do
 
   # User signup using apiKey client secret
   scope "/registration" do
-    post "/", Uro.UserController, :createClient
+    post "/", Uro.UserController, :create_client
   end
 
   scope "/profile" do
     pipe_through([:authenticated_user])
-    get("/", Uro.UserController, :showCurrent)
+    get("/", Uro.UserController, :show_current)
   end
 
   scope "/session" do
-    post("/", Uro.AuthenticationController, :loginClient)
+    post("/", Uro.AuthenticationController, :login_client)
 
     scope "/renew" do
       post("/", Uro.AuthenticationController, :renew)
@@ -123,7 +124,7 @@ defmodule Uro.Router do
 
   scope "/storage" do
     scope "/tag" do
-      get "/:tag", Uro.StorageController, :indexByTag
+      get "/:tag", Uro.StorageController, :index_by_tag
     end
 
     get "/:id", Uro.StorageController, :show
@@ -176,8 +177,8 @@ defmodule Uro.Router do
     scope "/avatars" do
       pipe_through([:dashboard_avatars])
 
-      get "/", Uro.AvatarController, :indexUploads
-      get "/:id", Uro.AvatarController, :showUpload
+      get "/", Uro.AvatarController, :index_uploads
+      get "/:id", Uro.AvatarController, :show_upload
       post "/", Uro.AvatarController, :create
       put "/:id", Uro.AvatarController, :update
       delete "/:id", Uro.AvatarController, :delete
@@ -186,8 +187,8 @@ defmodule Uro.Router do
     scope "/maps" do
       pipe_through([:dashboard_maps])
 
-      get "/", Uro.MapController, :indexUploads
-      get "/:id", Uro.MapController, :showUpload
+      get "/", Uro.MapController, :index_uploads
+      get "/:id", Uro.MapController, :show_upload
       post "/", Uro.MapController, :create
       put "/:id", Uro.MapController, :update
       delete "/:id", Uro.MapController, :delete
@@ -196,8 +197,8 @@ defmodule Uro.Router do
     scope "/props" do
       pipe_through([:dashboard_props])
 
-      get "/", Uro.PropController, :indexUploads
-      get "/:id", Uro.PropController, :showUpload
+      get "/", Uro.PropController, :index_uploads
+      get "/:id", Uro.PropController, :show_upload
       post "/", Uro.PropController, :create
       put "/:id", Uro.PropController, :update
       delete "/:id", Uro.PropController, :delete

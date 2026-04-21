@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro do
   @moduledoc """
   The entrypoint for defining your web interface, such
@@ -80,15 +82,4 @@ defmodule Uro do
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
-
-  require Protocol
-
-  Protocol.derive(Inspect, Plug.Conn,
-    only: [
-      :method,
-      :params,
-      :request_path,
-      :assigns
-    ]
-  )
 end

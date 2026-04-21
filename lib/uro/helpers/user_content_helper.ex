@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Helpers.UserContentHelper do
   @doc false
   def merge_map_with_base_user_content(map, user_content) do

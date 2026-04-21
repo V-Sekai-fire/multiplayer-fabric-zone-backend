@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.UserIdentities do
   use PowAssent.Ecto.UserIdentities.Context,
     repo: Uro.Repo,

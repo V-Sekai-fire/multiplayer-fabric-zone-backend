@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.MixProject do
   use Mix.Project
 
@@ -46,7 +48,6 @@ defmodule Uro.MixProject do
       {:phoenix_live_view, "~> 0.20.3"},
       {:phoenix_view, "~> 2.0"},
       {:ecto_sql, "~> 3.11"},
-
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
       {:cors_plug, "~> 3.0"},

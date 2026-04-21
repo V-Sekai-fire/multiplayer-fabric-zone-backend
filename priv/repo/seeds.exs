@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 # Script for populating the database. You can run it as:
 #
 #     mix run priv/repo/seeds.exs

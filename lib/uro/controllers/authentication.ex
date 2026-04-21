@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.AuthenticationController do
   @moduledoc false
 
@@ -293,8 +295,8 @@ defmodule Uro.AuthenticationController do
     end
   end
 
-  operation(:loginClient,
-    operation_id: "loginClient",
+  operation(:login_client,
+    operation_id: "login_client",
     summary: "Login Game Client",
     description: "Create a new session for game client.",
     request_body: {
@@ -356,7 +358,7 @@ defmodule Uro.AuthenticationController do
     ]
   )
 
-  def loginClient(conn, %{"user" => credentials}) do
+  def login_client(conn, %{"user" => credentials}) do
     conn
     |> validate_credentials(credentials)
     |> case do

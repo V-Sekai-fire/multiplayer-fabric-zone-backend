@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 # lib/my_app_web/ensure_user_not_locked_plug.ex
 defmodule Uro.EnsureUserNotLockedPlug do
   alias Plug.Conn

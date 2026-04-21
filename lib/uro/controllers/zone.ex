@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.ZoneController do
   use Uro, :controller
 
@@ -9,10 +11,10 @@ defmodule Uro.ZoneController do
   tags(["zones"])
 
   def ensure_has_address(conn, params) do
-    if !Map.has_key?(params, "address") do
-      Map.put(params, "address", to_string(:inet_parse.ntoa(conn.remote_ip)))
-    else
+    if Map.has_key?(params, "address") do
       params
+    else
+      Map.put(params, "address", to_string(:inet_parse.ntoa(conn.remote_ip)))
     end
   end
 

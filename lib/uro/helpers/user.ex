@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Helpers.User do
   @moduledoc """
   User helper functions, automatically imported by controllers.
@@ -88,7 +90,7 @@ defmodule Uro.Helpers.User do
     )
   end
 
-  def is_session_user?(conn) do
+  def session_user?(conn) do
     user = user_from_key(conn, "me")
 
     case user do

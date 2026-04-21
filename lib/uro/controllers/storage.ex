@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.StorageController do
   use Uro, :controller
 
@@ -49,7 +51,7 @@ defmodule Uro.StorageController do
     })
   end
 
-  operation(:indexByTag,
+  operation(:index_by_tag,
     operation_id: "listSharedFilesByTag",
     summary: "List all public storage files by tag",
     parameters: [
@@ -78,7 +80,7 @@ defmodule Uro.StorageController do
     ]
   )
 
-  def indexByTag(conn, %{"tag" => tag}) do
+  def index_by_tag(conn, %{"tag" => tag}) do
     file_list = SharedContent.list_public_shared_files_by_tag(tag)
 
     conn
@@ -119,14 +121,14 @@ defmodule Uro.StorageController do
     id
     |> SharedContent.get_public_shared_file!()
     |> case do
-      %Uro.SharedContent.SharedFile{} = sharedFile ->
+      %Uro.SharedContent.SharedFile{} = shared_file ->
         conn
         |> put_status(200)
         |> json(%{
           data: %{
             files:
               Uro.Helpers.SharedContentHelper.get_api_shared_content(
-                sharedFile,
+                shared_file,
                 %{merge_uploader_id: true, merge_is_public: true}
               )
           }
@@ -195,15 +197,15 @@ defmodule Uro.StorageController do
     shared_file = SharedContent.get_shared_file!(id)
 
     case SharedContent.update_shared_file(shared_file, file_params) do
-      {:ok, sharedFile} ->
+      {:ok, shared_file} ->
         conn
         |> put_status(200)
         |> json(%{
           data: %{
-            id: to_string(sharedFile.id),
+            id: to_string(shared_file.id),
             files:
               Uro.Helpers.SharedContentHelper.get_api_shared_content(
-                sharedFile,
+                shared_file,
                 %{merge_uploader_id: true}
               )
           }
@@ -229,11 +231,14 @@ defmodule Uro.StorageController do
   def manifest(conn, %{"id" => id}) do
     case SharedContent.get_shared_file!(id) do
       %Uro.SharedContent.SharedFile{} = f ->
-        json(conn, %{data: %{
-          store_url: f.store_url,
-          chunks:    f.chunks || [],
-          baked_url: f.baked_url
-        }})
+        json(conn, %{
+          data: %{
+            store_url: f.store_url,
+            chunks: f.chunks || [],
+            baked_url: f.baked_url
+          }
+        })
+
       _ ->
         conn |> put_status(404) |> json(%{error: "not found"})
     end
@@ -245,9 +250,11 @@ defmodule Uro.StorageController do
         case SharedContent.set_baked_url(f, baked_url) do
           {:ok, updated} ->
             json(conn, %{data: %{id: to_string(updated.id)}})
+
           {:error, changeset} ->
             {:error, changeset}
         end
+
       _ ->
         conn |> put_status(404) |> json(%{error: "not found"})
     end
@@ -255,9 +262,9 @@ defmodule Uro.StorageController do
 
   def delete(conn, %{"id" => id}) do
     case SharedContent.get_shared_file!(id) do
-      %Uro.SharedContent.SharedFile{} = sharedFile ->
-        case SharedContent.delete_shared_file(sharedFile) do
-          {:ok, _sharedFile} ->
+      %Uro.SharedContent.SharedFile{} = shared_file ->
+        case SharedContent.delete_shared_file(shared_file) do
+          {:ok, _shared_file} ->
             conn
             |> put_status(200)
             |> json(%{data: %{}})

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 import Config
 Code.require_file("config/helpers.exs")
 Code.ensure_loaded!(Uro.Config.Helpers)
@@ -29,4 +31,3 @@ config :uro, Uro.Repo,
   stacktrace: true,
   migration_lock: false,
   pool_size: 10
-

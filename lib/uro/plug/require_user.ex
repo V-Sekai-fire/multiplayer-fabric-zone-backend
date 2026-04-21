@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Plug.RequireUser do
   import Plug.Conn
 
@@ -8,7 +10,7 @@ defmodule Uro.Plug.RequireUser do
   @spec call(Conn.t(), any()) :: Conn.t()
   def call(conn, _opts) do
     conn
-    |> Uro.Helpers.User.is_session_user?()
+    |> Uro.Helpers.User.session_user?()
     |> maybe_halt(conn)
   end
 

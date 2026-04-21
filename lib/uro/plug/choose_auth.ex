@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.Plug.ChooseAuth do
   import Plug.Conn
 
@@ -12,7 +14,7 @@ defmodule Uro.Plug.ChooseAuth do
         [] ->
           conn
 
-        [auth_header] ->
+        [_auth_header] ->
           assign(conn, :signed_access_token, token)
       end
 

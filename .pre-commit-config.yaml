@@ -23,7 +23,14 @@ repos:
 
       - id: mix-credo
         name: "elixir: mix credo"
-        entry: mix credo
+        entry: mix credo --min-priority high
         language: system
         pass_filenames: false
         files: \.exs*$
+
+      - id: check-spdx
+        name: "license: SPDX headers"
+        entry: python3 scripts/check_spdx.py
+        language: system
+        files: \.(ex|exs)$
+        exclude: ^(deps|_build)/
