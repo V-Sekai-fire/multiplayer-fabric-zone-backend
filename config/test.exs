@@ -1,13 +1,16 @@
 import Config
 
+# TODO: Switch to mutal authentication.
+
 config :uro, Uro.Repo,
   show_sensitive_data_on_connection_error: true,
   url: System.get_env("TEST_DATABASE_URL"),
-  username: "postgres",
-  password: "postgres",
+  username: "vsekai",
+  password: "vsekai",
   hostname: "localhost",
-  database: "uro-test",
+  port: 26257,
+  database: "vsekai_test",
   stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
+  migration_lock: false,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10

@@ -18,15 +18,16 @@ config :logger, level: :debug
 config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
+# TODO: Switch to mutal authentication.
 config :uro, Uro.Repo,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10,
   url: System.get_env("DATABASE_URL"),
-  username: "postgres",
-  password: "postgres",
+  username: "vsekai",
+  password: "vsekai",
   hostname: "localhost",
-  database: "uro-dev",
+  port: 26257,
+  database: "vsekai",
   stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
+  migration_lock: false,
   pool_size: 10
 

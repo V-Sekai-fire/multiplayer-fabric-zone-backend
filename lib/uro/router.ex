@@ -19,6 +19,7 @@ defmodule Uro.Router do
     plug(:fetch_session)
 
     plug(RemoteIp)
+    plug(Uro.Plug.ClerkAuthentication)
     plug(Uro.Plug.Authentication, otp_app: :uro)
 
     plug(OpenApiSpex.Plug.PutApiSpec, module: Uro.OpenAPI.Specification)
