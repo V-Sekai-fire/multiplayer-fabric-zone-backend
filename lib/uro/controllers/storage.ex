@@ -308,6 +308,51 @@ defmodule Uro.StorageController do
     ]
   )
 
+  operation(:manifest,
+    operation_id: "getManifest",
+    summary: "Get asset manifest",
+    description: """
+    Returns `store_url`, `chunks`, and `baked_url` for an asset. Poll this
+    endpoint after `POST /storage` until `baked_url` is non-null, then use
+    `baked_url` to fetch the casync `.caidx` index and send
+    `CMD_INSTANCE_ASSET` via WebTransport.
+    """,
+    parameters: [
+      OpenApiSpex.Operation.parameter(:id, :path, :string, "Asset UUID")
+    ],
+    responses: [
+      ok: {
+        "",
+        "application/json",
+        %Schema{
+          type: :object,
+          properties: %{
+            data: %Schema{
+              type: :object,
+              properties: %{
+                store_url: %Schema{
+                  type: :string,
+                  description: "Raw upload location in VersityGW"
+                },
+                chunks: %Schema{
+                  type: :array,
+                  items: %Schema{type: :object},
+                  description: "casync chunk descriptors [{hash, offset, length}]"
+                },
+                baked_url: %Schema{
+                  type: :string,
+                  nullable: true,
+                  description:
+                    "casync .caidx index URL in VersityGW; null until the baker container completes"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  )
+
   def manifest(conn, %{"id" => id}) do
     case SharedContent.get_shared_file!(id) do
       %Uro.SharedContent.SharedFile{} = f ->
@@ -323,6 +368,52 @@ defmodule Uro.StorageController do
         conn |> put_status(404) |> json(%{error: "not found"})
     end
   end
+
+  operation(:bake,
+    operation_id: "setBakedUrl",
+    summary: "Set baked_url (baker callback)",
+    description: """
+    Called by the baker container after it has uploaded the casync `.caidx`
+    index to VersityGW. Sets `baked_url` on the `shared_files` row so clients
+    polling `POST /storage/:id/manifest` will see a non-null value.
+
+    Authenticated via `BAKER_TOKEN` (internal service token — not a user OAuth
+    token). Not intended for direct client use.
+    """,
+    parameters: [
+      OpenApiSpex.Operation.parameter(:id, :path, :string, "Asset UUID")
+    ],
+    request_body: {
+      "",
+      "application/json",
+      %Schema{
+        type: :object,
+        required: [:baked_url],
+        properties: %{
+          baked_url: %Schema{
+            type: :string,
+            description:
+              "casync .caidx URL in VersityGW, e.g. http://versitygw:7070/uro-uploads/<id>.caidx"
+          }
+        }
+      }
+    },
+    responses: [
+      ok: {
+        "",
+        "application/json",
+        %Schema{
+          type: :object,
+          properties: %{
+            data: %Schema{
+              type: :object,
+              properties: %{id: %Schema{type: :string}}
+            }
+          }
+        }
+      }
+    ]
+  )
 
   def bake(conn, %{"id" => id, "baked_url" => baked_url}) do
     case SharedContent.get_shared_file!(id) do
