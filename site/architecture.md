@@ -12,7 +12,7 @@ Cloudflare edge  (orange cloud on, Full strict SSL)
   ▼
 Caddy:443  (Docker, Cloudflare Origin Certificate)
   │  /api/v1/* and /uploads/*  → uro:4000
-  │  everything else           → frontend:3000
+  │  everything else           → frontend:3000  (Next.js web UI, not required for PoC)
   ▼
 zone-backend:4000  (Phoenix/Uro, Docker)
   ├── crdb:26257        CockroachDB single-node, ghcr.io/v-sekai/cockroach
@@ -39,7 +39,8 @@ via `ZONE_CERT_HASH_B64`.
 terminates at the Cloudflare edge under Full (strict) SSL mode. Caddy holds
 a Cloudflare Origin Certificate and listens on TCP 443; it reverse-proxies
 `/api/v1/*` and `/uploads/*` to `uro:4000` and everything else to
-`frontend:3000`. No cloudflared tunnel is used.
+`frontend:3000` (Next.js web UI). No cloudflared tunnel is used.
+The frontend is not required for the PoC; `zone_console` CLI replaces it.
 
 WebTransport uses QUIC over UDP. Cloudflare does not proxy UDP, so
 `zone-700a.chibifire.com` is a plain DNS A record (orange cloud off) pointing
@@ -98,7 +99,7 @@ users
   email, username, display_name
   ↑ belongs_to
 user_identities
-  provider ("pow_assent" | "clerk" | …)
+  provider ("pow_assent" | …)
   uid (provider-assigned subject)
   ↑ joins to users
 

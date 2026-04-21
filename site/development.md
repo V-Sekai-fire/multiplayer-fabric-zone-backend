@@ -137,4 +137,5 @@ bash baker/regenerate-baker-project.sh [../multiplayer-fabric-rx] [../multiplaye
 | 7 | Zone orchestrator — Docker `editor=no` zone server lifecycle, port pool UDP 7443–7542 | planned |
 | 8 | Godot zone handler — authority zone runs instance pipeline | planned |
 | 9 | Round-trip smoke test — upload → instance → entity list on prod | planned |
-| 10 | Multi-platform verification — macOS + Linux + Windows, AccessKit | planned |
+| 10 | Two-user co-presence — second client connects to same zone, observes entity from first client | planned |
+| 11 | Multi-platform verification — macOS + Linux + Windows, AccessKit | planned |

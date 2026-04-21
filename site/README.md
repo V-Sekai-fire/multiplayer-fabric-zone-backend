@@ -14,6 +14,7 @@ An open-source social VR platform built on a custom Godot Engine fork.
 | [Zones](zones.md) | Zone model, topology, registration protocol |
 | [Zone console](zone-console.md) | `zone_console` CLI: commands and wire protocol |
 | [Development](development.md) | Test commands, build targets, red-green-refactor workflow |
+| [PoC runbook](poc-runbook.md) | End-to-end walkthrough: two users co-present in a zone |
 
 ## Repository layout
 
