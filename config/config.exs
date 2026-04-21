@@ -114,11 +114,11 @@ config :cors_plug,
 
 config :joken, default_signer: Helpers.get_env("JOKEN_SIGNER", "gqawCOER09ZZjaN8W2QM9XT9BeJSZ9qc")
 
-config :uro, :stale_shard_cutoff,
+config :uro, :stale_zone_cutoff,
   amount: 3,
   calendar_type: "month"
 
-config :uro, :stale_shard_interval, 30 * 24 * 60 * 60 * 1000
+config :uro, :stale_zone_interval, 30 * 24 * 60 * 60 * 1000
 
 config :uro, Uro.Turnstile,
   secret_key:

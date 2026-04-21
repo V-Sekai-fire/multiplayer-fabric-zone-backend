@@ -19,7 +19,7 @@ defmodule Uro.VSekai.ZoneJanitor do
   end
 
   defp cleanup_stale_zones() do
-    stale_zone_cutoff = Application.get_env(:uro, :stale_shard_cutoff)
+    stale_zone_cutoff = Application.get_env(:uro, :stale_zone_cutoff)
 
     query =
       from z in "zones",
@@ -32,6 +32,6 @@ defmodule Uro.VSekai.ZoneJanitor do
   end
 
   defp schedule_cleanup() do
-    Process.send_after(self(), :cleanup, Application.get_env(:uro, :stale_shard_interval))
+    Process.send_after(self(), :cleanup, Application.get_env(:uro, :stale_zone_interval))
   end
 end
