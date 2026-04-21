@@ -206,11 +206,9 @@ defmodule Uro.UserController do
 
     Repo.transaction(fn ->
       with :ok <-
-             (fn ->
-                if api_key == System.get_env("SIGNUP_API_KEY") do
-                  :ok
-                end
-              end).(),
+             (if api_key == System.get_env("SIGNUP_API_KEY"),
+               do: :ok,
+               else: {:error, :insufficient_permission}),
            {:ok, user} <- Accounts.create(create_params),
            :ok <- Accounts.send_confirmation_email(user),
            conn <- Pow.Plug.create(conn, user) do
@@ -229,8 +227,8 @@ defmodule Uro.UserController do
           Session.to_json_schema(session)
         )
 
-      {:error, conn} ->
-        conn
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 

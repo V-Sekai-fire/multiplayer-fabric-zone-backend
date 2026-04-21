@@ -55,4 +55,6 @@ defmodule Uro.FallbackController do
   def call(conn, {:error, status, message}) when is_atom(status) and is_binary(message) do
     json_error(conn, code: status, message: message)
   end
+
+  def call(conn, _), do: json_error(conn, code: :internal_server_error)
 end
