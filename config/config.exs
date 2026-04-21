@@ -49,6 +49,20 @@ config :uro,
     |> URI.new!(),
   root_origin: root_origin
 
+crdb_ca_cert = System.get_env("CRDB_CA_CERT")
+crdb_ssl_opts =
+  if crdb_ca_cert do
+    [
+      cacertfile: crdb_ca_cert,
+      certfile: System.get_env("CRDB_CLIENT_CERT"),
+      keyfile: System.get_env("CRDB_CLIENT_KEY"),
+      verify: :verify_peer,
+      server_name_indication: ~c"crdb"
+    ]
+  else
+    []
+  end
+
 config :uro, Uro.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: Helpers.get_env("DATABASE_URL", "postgresql://vsekai:vsekai@database:26257/vsekai?sslmode=disable"),
@@ -60,7 +74,9 @@ config :uro, Uro.Repo,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
-  migration_lock: false
+  migration_lock: false,
+  ssl: crdb_ca_cert != nil,
+  ssl_opts: crdb_ssl_opts
 
 
 config :uro, Uro.Endpoint,
