@@ -1,7 +1,52 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.AuthenticationController do
-  @moduledoc false
+  @moduledoc """
+  HTTP handlers for session creation, renewal, and OAuth2 callbacks.
+
+  ## Auth model
+
+  zone-backend uses **Pow session tokens** only. On successful login, Pow
+  writes a session token to CockroachDB and returns it as a Bearer token.
+  All subsequent requests carry:
+
+  ```
+  Authorization: Bearer <token>
+  ```
+
+  Tokens rotate on renew (`POST /session/renew`). The `Uro.Plug.Authentication`
+  plug fetches `current_user` from the session token and writes it to
+  `conn.assigns[:current_user]` so all downstream controller code is uniform.
+
+  ## Request pipeline
+
+  ```
+  Pow.Plug.Authentication  ← resolves current_user from Bearer token
+  ```
+
+  ## Authorization pipelines (router.ex)
+
+  | Pipeline | Plug(s) | Used for |
+  |---|---|---|
+  | `:api` | `Pow.Plug.Authentication` | All routes — sets current_user if token present |
+  | `:authenticated` | `Pow.Plug.RequireAuthenticated` | Write routes on `/users` |
+  | `:authenticated_admin` | `RequireAuthenticated` + `RequireAdmin` | `/admin` |
+  | `:authenticated_user` | `ChooseAuth` | Dashboard, `/profile`, `/session` reads |
+  | `:authenticated_shared_file` | `RequireSharedFileUploadPermission` | Storage writes + bake |
+  | `:dashboard_avatars` | `RequireAvatarUploadPermission` | Avatar uploads |
+  | `:dashboard_maps` | `RequireMapUploadPermission` | Map uploads |
+  | `:dashboard_props` | `RequirePropUploadPermission` | Prop uploads |
+
+  ## OAuth2 (PowAssent)
+
+  OAuth2 providers are configured in `config/config.exs` under
+  `:pow_assent, :providers`. Supported flows:
+
+  1. `GET /login/:provider` → redirect URL + state
+  2. User authenticates with provider
+  3. Provider redirects to `GET /login/:provider/callback?code=…`
+  4. PowAssent upserts the user and creates a Pow session
+  """
 
   use Uro, :controller
 

@@ -1,6 +1,86 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2026 K. S. Ernest (iFire) Lee
 defmodule Uro.StorageController do
+  @moduledoc """
+  HTTP handlers for the asset pipeline: upload, bake, manifest, and CRUD.
+
+  ## Pipeline overview
+
+  ```
+  1. Client uploads packed scene (.tscn / .scn)
+     POST /storage  multipart
+     → zone-backend stores raw file in VersityGW
+     → writes shared_files row  (store_url set, baked_url null)
+
+  2. zone-backend spawns a one-shot baker container
+     docker run --rm multiplayer-fabric-godot-baker:latest
+       ASSET_ID=<id>  CONTENT_TYPE=avatar|map
+       URO_URL=http://zone-backend:4000
+       VERSITYGW_URL=http://versitygw:7070
+
+  3. Baker container (Godot editor=yes build)
+     a. Download scene from VersityGW
+     b. godot --editor --headless --quit  (resource import pass)
+     c. godot --headless --script res://baker/run.gd -- <type> <scene>
+          VSKImporter.clean_packed_scene_for_avatar/map/1
+          VSKExporter.export_avatar/map/3  →  cleaned binary .scn
+     d. AriaStorage.create_chunks(.scn, compression: :zstd)
+          → uploads .cacnk chunk files to VersityGW at
+            chunks/<ab>/<cd>/<sha512_256>.cacnk
+     e. AriaStorage.create_index_from_chunks(chunks, format: :caidx)
+          → writes <id>.caidx
+     f. POST /storage/<id>/bake  {baked_url: "http://versitygw:7070/.../<id>.caidx"}
+
+  4. zone-backend sets baked_url on the shared_files row
+
+  5. Client polls POST /storage/:id/manifest until baked_url is non-null
+     → then sends CMD_INSTANCE_ASSET via WebTransport to the zone server
+  ```
+
+  ## casync format
+
+  Assets use the casync content-addressable format (AriaStorage Elixir library):
+
+  - `.cacnk` — content-addressed chunk (SHA512/256 hash, zstd compressed)
+  - `.caidx` — directory-tree index referencing chunks by hash + offset
+  - Chunk path: `chunks/<first-byte-pair>/<second-byte-pair>/<hash>.cacnk`
+
+  Zone clients download only the chunks they do not already have locally,
+  enabling delta-sync updates.
+
+  ## Baker security
+
+  The baker container runs on the Docker-internal network and cannot reach
+  the public internet. It authenticates to zone-backend via `BAKER_TOKEN`
+  (internal service token), not a user OAuth token.
+
+  ## Monitoring
+
+  ```sh
+  # List baker containers (includes exited)
+  docker ps -a --filter ancestor=multiplayer-fabric-godot-baker:latest
+
+  # Confirm baked_url set in CockroachDB
+  docker exec multiplayer-fabric-hosting-crdb-1 \\
+    /cockroach/cockroach sql --insecure \\
+    -e "SELECT id, name, baked_url IS NOT NULL FROM vsekai.shared_files \\
+        ORDER BY inserted_at DESC LIMIT 5;"
+
+  # Confirm .caidx present in VersityGW
+  AWS_ACCESS_KEY_ID=minioadmin AWS_SECRET_ACCESS_KEY=minioadmin \\
+    aws --endpoint-url http://localhost:7070 s3 ls s3://uro-uploads/ | grep .caidx
+  ```
+
+  ## Source files
+
+  | File | Role |
+  |------|------|
+  | `lib/uro/controllers/storage.ex` | HTTP handlers (this file) |
+  | `lib/uro/shared_content.ex` | Context: DB queries, `set_baked_url` |
+  | `lib/uro/shared_content/shared_file.ex` | Ecto schema + changesets |
+  | `aria-storage/` | AriaStorage library: casync chunking + index |
+  """
+
   use Uro, :controller
 
   alias OpenApiSpex.Schema
