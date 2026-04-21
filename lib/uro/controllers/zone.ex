@@ -347,9 +347,15 @@ defmodule Uro.ZoneController do
     if can_connection_modify_zone(conn, zone) do
       case VSekai.update_zone(zone, zone_params) do
         {:ok, zone} ->
+          desync_url = VSekai.get_desync_url_for_map(zone.map)
+
+          Uro.Endpoint.broadcast("zone:#{zone.id}", "zone_updated", %{
+            desync_index_url: desync_url
+          })
+
           conn
           |> put_status(200)
-          |> json(%{data: %{id: to_string(zone.id)}})
+          |> json(%{data: %{id: to_string(zone.id), desync_index_url: desync_url}})
 
         {:error, %Ecto.Changeset{}} ->
           json_error(conn)

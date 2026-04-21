@@ -8,6 +8,7 @@ defmodule Uro.VSekai do
   import Ecto.Query, warn: false
   alias Uro.Repo
 
+  alias Uro.SharedContent.SharedFile
   alias Uro.VSekai.Zone
 
   def zone_freshness_time_in_seconds, do: 30
@@ -58,5 +59,18 @@ defmodule Uro.VSekai do
 
   def get_zone_by_address(address) do
     Repo.get_by(Zone, address: address)
+  end
+
+  # Returns the casync .caidx baked_url for the SharedFile whose name matches
+  # map_name, or nil if not yet baked. Convention: SharedFile.name == zone.map.
+  def get_desync_url_for_map(nil), do: nil
+
+  def get_desync_url_for_map(map_name) do
+    SharedFile
+    |> where([f], f.name == ^map_name and not is_nil(f.baked_url))
+    |> order_by([f], desc: f.inserted_at)
+    |> limit(1)
+    |> select([f], f.baked_url)
+    |> Repo.one()
   end
 end

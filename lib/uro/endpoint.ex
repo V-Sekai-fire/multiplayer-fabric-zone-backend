@@ -7,6 +7,10 @@ defmodule Uro.Endpoint do
     URI.to_string(Application.fetch_env!(:uro, :url)) <> pathname
   end
 
+  socket "/socket", Uro.UserSocket,
+    websocket: true,
+    longpoll: false
+
   if Mix.env() == :dev do
     plug(Phoenix.CodeReloader)
   end

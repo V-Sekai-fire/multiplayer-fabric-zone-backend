@@ -63,7 +63,8 @@ defmodule Uro.VSekai.Zone do
       port: zone.port,
       map: to_string(zone.map),
       name: to_string(zone.name),
-      cert_hash: zone.cert_hash || ""
+      cert_hash: zone.cert_hash || "",
+      desync_index_url: Uro.VSekai.get_desync_url_for_map(zone.map)
     }
   end
 
