@@ -37,4 +37,4 @@ RUN mix uro.apigen
 EXPOSE ${PORT}
 
 ENV COMPILE_PHASE=false
-ENTRYPOINT iex -S mix do ecto.migrate, phx.server
+ENTRYPOINT iex -S mix do ecto.create, ecto.migrate, run priv/repo/test_seeds.exs, phx.server

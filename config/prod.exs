@@ -2,6 +2,8 @@
 # Copyright (c) 2026 K. S. Ernest (iFire) Lee
 import Config
 
+config :uro, Uro.Endpoint, server: true
+
 # Unused (no static files)
 # config :uro, Uro.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
