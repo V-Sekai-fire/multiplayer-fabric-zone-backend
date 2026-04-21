@@ -18,7 +18,6 @@ config :logger, level: :debug
 config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
-# TODO: Switch to mutal authentication.
 config :uro, Uro.Repo,
   show_sensitive_data_on_connection_error: true,
   url: System.get_env("DATABASE_URL"),

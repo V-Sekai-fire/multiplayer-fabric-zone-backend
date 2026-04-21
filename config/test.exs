@@ -1,7 +1,5 @@
 import Config
 
-# TODO: Switch to mutal authentication.
-
 config :uro, Uro.Repo,
   show_sensitive_data_on_connection_error: true,
   url: System.get_env("TEST_DATABASE_URL"),

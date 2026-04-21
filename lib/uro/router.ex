@@ -77,9 +77,6 @@ defmodule Uro.Router do
   get("/openapi", OpenApiSpex.Plug.RenderSpec, [])
   get("/docs", Uro.OpenAPI.Viewer, [])
 
-  #### Used by game client only ####
-  # TODO: merge into other routes
-
   # User signup using apiKey client secret
   scope "/registration" do
     post "/", Uro.UserController, :createClient
@@ -90,10 +87,7 @@ defmodule Uro.Router do
     get("/", Uro.UserController, :showCurrent)
   end
 
-  ##################################
-
   scope "/session" do
-    # TODO: used by game client only, move to '/login' route
     post("/", Uro.AuthenticationController, :loginClient)
 
     scope "/renew" do
