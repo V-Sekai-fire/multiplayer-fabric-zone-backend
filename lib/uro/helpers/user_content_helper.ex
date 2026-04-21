@@ -51,54 +51,50 @@ defmodule Uro.Helpers.UserContentHelper do
   end
 
   @doc false
-  defp has_upload_avatars_field?(%{can_upload_avatars: true}) do
-    true
-  end
+  def has_avatar_upload_permission?(nil), do: false
 
-  @doc false
-  defp has_upload_avatars_field?(_) do
-    false
-  end
-
-  @doc false
-  defp has_upload_maps_field?(%{can_upload_maps: true}) do
-    true
-  end
-
-  @doc false
-  defp has_upload_maps_field?(_) do
-    false
-  end
-
-  @doc false
-  defp has_upload_props_field?(%{can_upload_props: true}) do
-    true
-  end
-
-  @doc false
-  defp has_upload_props_field?(_) do
-    false
-  end
-
-  @doc false
   def has_avatar_upload_permission?(user) do
-    user
-    |> Uro.Helpers.Auth.get_user_privilege_ruleset()
-    |> has_upload_avatars_field?()
+    ruleset = Uro.Helpers.Auth.get_user_privilege_ruleset(user)
+    graph = build_upload_permission_graph(to_string(user.id), ruleset)
+    Taskweft.ReBAC.check_rel(graph, to_string(user.id), "IS_MEMBER_OF", "avatar_uploaders")
   end
 
   @doc false
+  def has_map_upload_permission?(nil), do: false
+
   def has_map_upload_permission?(user) do
-    user
-    |> Uro.Helpers.Auth.get_user_privilege_ruleset()
-    |> has_upload_maps_field?()
+    ruleset = Uro.Helpers.Auth.get_user_privilege_ruleset(user)
+    graph = build_upload_permission_graph(to_string(user.id), ruleset)
+    Taskweft.ReBAC.check_rel(graph, to_string(user.id), "IS_MEMBER_OF", "map_uploaders")
   end
 
   @doc false
+  def has_prop_upload_permission?(nil), do: false
+
   def has_prop_upload_permission?(user) do
-    user
-    |> Uro.Helpers.Auth.get_user_privilege_ruleset()
-    |> has_upload_props_field?()
+    ruleset = Uro.Helpers.Auth.get_user_privilege_ruleset(user)
+    graph = build_upload_permission_graph(to_string(user.id), ruleset)
+    Taskweft.ReBAC.check_rel(graph, to_string(user.id), "IS_MEMBER_OF", "prop_uploaders")
+  end
+
+  # Builds a per-request ReBAC graph from the existing boolean privilege ruleset.
+  # Each upload permission becomes an IS_MEMBER_OF edge to the relevant group.
+  defp build_upload_permission_graph(user_id, ruleset) do
+    graph = Taskweft.ReBAC.new_graph()
+
+    graph =
+      if ruleset && ruleset.can_upload_avatars,
+        do: Taskweft.ReBAC.add_edge(graph, user_id, "avatar_uploaders", "IS_MEMBER_OF"),
+        else: graph
+
+    graph =
+      if ruleset && ruleset.can_upload_maps,
+        do: Taskweft.ReBAC.add_edge(graph, user_id, "map_uploaders", "IS_MEMBER_OF"),
+        else: graph
+
+    if ruleset && ruleset.can_upload_props,
+      do: Taskweft.ReBAC.add_edge(graph, user_id, "prop_uploaders", "IS_MEMBER_OF"),
+      else: graph
   end
 
   @spec session_has_avatar_upload_permission?(

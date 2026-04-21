@@ -18,6 +18,7 @@ RUN apk add --no-cache \
 	bash \
 	make \
 	gcc \
+	g++ \
 	curl \
 	libc-dev
 
