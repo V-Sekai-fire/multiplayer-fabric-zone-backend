@@ -44,17 +44,17 @@ spec:
       # In addition to the client certificate and key, the init-certs entrypoint will symlink
       # the cluster CA to the certs directory.
       - name: init-certs
-        image: cockroachdb/cockroach-k8s-request-cert:0.4
-        imagePullPolicy: IfNotPresent
+        image: ghcr.io/v-sekai/cockroach:latest
+        imagePullPolicy: Always
         command:
-        - "/bin/ash"
+        - "/bin/sh"
         - "-ecx"
-        - "/request-cert -namespace=${POD_NAMESPACE} -certs-dir=/cockroach-certs -type=client -user=uro-prod -symlink-ca-from=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-        env:
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
+        - |
+          cockroach cert create-client uro-prod \
+            --certs-dir=/cockroach-certs \
+            --ca-key=/cockroach-certs/ca.key \
+            --lifetime=876000h
+          ln -sf /var/run/secrets/kubernetes.io/serviceaccount/ca.crt /cockroach-certs/ca.crt
         volumeMounts:
         - name: client-certs
           mountPath: /cockroach-certs

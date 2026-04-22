@@ -4,7 +4,7 @@ services:
   # Runs as root so it can create files, then chowns to uid 1000 (cockroach).
   # Certs are issued with a 100-year lifetime (876000h) — effectively no expiry.
   crdb-certs-init:
-    image: cockroachdb/cockroach:v25.1.1
+    image: ghcr.io/v-sekai/cockroach:latest
     user: "0:0"
     volumes:
       - crdbcerts:/certs
@@ -19,7 +19,7 @@ services:
       "
 
   database:
-    image: cockroachdb/cockroach:v25.1.1
+    image: ghcr.io/v-sekai/cockroach:latest
     restart: always
     shm_size: 128mb
     command: start-single-node --certs-dir=/certs --listen-addr=:26257 --http-addr=:8080
