@@ -53,7 +53,6 @@ defmodule Uro.MixProject do
       {:cors_plug, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.5", only: :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:recode, "~> 0.7", only: :dev},
       {:gettext, "~> 0.18"},
       {:hackney, "~> 1.17"},
       {:httpoison, "~> 2.0"},
