@@ -86,7 +86,7 @@ defmodule Uro do
     id (uuid)  address  port  map  name
     current_users  max_users
     cert_hash     SHA-256 fingerprint of zone server TLS cert (base64)
-    updated_at    last heartbeat timestamp
+    last_put_at   set by each explicit PUT /shards/:id from the zone server process
   ```
 
   ## Using this module

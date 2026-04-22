@@ -7,7 +7,7 @@ defmodule Uro.ZoneController do
   A **zone** is a running WebTransport game server
   (`zone-700a.chibifire.com:7443`). Zone servers self-register via
   `POST /shards` on boot and keep themselves alive with `PUT /shards/:id`
-  heartbeats every ~25 s. `ZoneJanitor` culls entries whose `updated_at` falls
+  heartbeats every ~25 s. `ZoneJanitor` culls entries whose `last_put_at` falls
   outside the configured staleness window.
 
   ## Self-registration flow
@@ -18,11 +18,11 @@ defmodule Uro.ZoneController do
     → zone-backend writes row to zones table
 
   every ~25 s:
-    → PUT /shards/:id   (touches updated_at — acts as heartbeat)
+    → PUT /shards/:id   (sets last_put_at — acts as heartbeat)
 
   ZoneJanitor (GenServer)
     → runs every :stale_zone_interval ms
-    → deletes rows where updated_at < now - :stale_zone_cutoff
+    → deletes rows where last_put_at < now - :stale_zone_cutoff
   ```
 
   ## cert_hash
@@ -320,7 +320,7 @@ defmodule Uro.ZoneController do
     summary: "Update Zone (Heartbeat)",
     description: """
     Zone server heartbeat. Called every ~25 s by the running zone server.
-    Touches `updated_at`; `ZoneJanitor` treats any row whose `updated_at` is
+    Sets `last_put_at`; `ZoneJanitor` treats any row whose `last_put_at` is
     older than `:stale_zone_cutoff` as dead and deletes it.
 
     The request body (`shard` key) is optional — a bare `PUT /shards/:id` with
