@@ -1,13 +1,6 @@
 repos:
   - repo: local
     hooks:
-      # - id: mix-test
-      #   name: "elixir: mix test"
-      #   entry: mix test
-      #   language: system
-      #   pass_filenames: false
-      #   files: \.exs*$
-
       - id: mix-format
         name: "elixir: mix format"
         entry: mix format --check-formatted
