@@ -65,7 +65,7 @@ jobs:
         run: mix format --check-formatted
 
       - name: Run tests
-        # mix test alias runs: ecto.create --quiet, ecto.migrate, test
         run: |
+          mix ecto.migrate
           mix run priv/repo/test_seeds.exs
           mix test --trace
