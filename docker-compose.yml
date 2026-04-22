@@ -76,10 +76,10 @@ services:
       CRDB_CLIENT_KEY: "/certs/client.root.key"
     volumes:
       - crdbcerts:/certs:ro
-    # healthcheck:
-    #   test: curl --fail http://uro:4000/health || exit 1
-    #   interval: 5s
-    #   timeout: 5s
+    healthcheck:
+      test: curl --fail http://uro:4000/health || exit 1
+      interval: 5s
+      timeout: 5s
 
   nextjs:
     build:
@@ -87,10 +87,10 @@ services:
       dockerfile: Dockerfile
     env_file:
       - frontend/.env
-    # healthcheck:
-    #   test: curl --fail http://nextjs:3000/health || exit 1
-    #   interval: 5s
-    #   timeout: 5s
+    healthcheck:
+      test: curl --fail http://nextjs:3000/health || exit 1
+      interval: 5s
+      timeout: 5s
     depends_on:
       - uro
 
@@ -108,14 +108,12 @@ services:
       - ./caddy/data:/data
       - ./caddy/config:/config
     depends_on:
-      - uro
-      - nextjs
-      # uro:
-      #   condition: service_healthy
-      #   restart: true
-      # nextjs:
-      #   condition: service_healthy
-      #   restart: true
+      uro:
+        condition: service_healthy
+        restart: true
+      nextjs:
+        condition: service_healthy
+        restart: true
 
 networks:
   uro:
