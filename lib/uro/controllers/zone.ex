@@ -111,7 +111,7 @@ defmodule Uro.ZoneController do
         "encoding" => "base64url",
         "algorithm" => "SHA-256",
         "description" =>
-          "Self-signed TLS certificate fingerprint from the zone record. Clients pin this value; no CA chain is required. Pre-seeded via ZONE_CERT_HASH_B64 in multiplayer-fabric-hosting/.env before the first registration."
+          "Self-signed TLS certificate fingerprint from the zone record. Clients pin this value; no CA chain is required. Supplied by the zone server at registration time."
       },
       "dns_requirement" =>
         "zone-700a.chibifire.com must use DNS-only (Cloudflare orange cloud OFF). QUIC/UDP cannot be proxied. The A record must point directly to the host machine (173.180.240.105)."

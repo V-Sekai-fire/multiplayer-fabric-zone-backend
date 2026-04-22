@@ -18,25 +18,15 @@ git submodule update --init --recursive
 
 ### Configure
 
-Create `multiplayer-fabric-hosting/.env`:
+Run `./generate-secrets.sh` from `multiplayer-fabric-hosting/` to populate `.env` with random secrets, then set your public URLs:
 
 ```sh
-URL=https://hub-700a.chibifire.com/api/v1/
-ROOT_ORIGIN=https://hub-700a.chibifire.com
-FRONTEND_URL=https://hub-700a.chibifire.com/
-
-ZONE_HOST=zone-700a.chibifire.com
-ZONE_PORT=443
-ZONE_CERT_HASH_B64=       # SHA-256 fingerprint of zone server TLS cert (base64)
-
-AWS_S3_BUCKET=uro-uploads
-AWS_S3_ENDPOINT=http://versitygw:7070
-AWS_ACCESS_KEY_ID=minioadmin
-AWS_SECRET_ACCESS_KEY=minioadmin
-
-PHOENIX_KEY_BASE=<64-char random — run: mix phx.gen.secret>
-JOKEN_SIGNER=<32-char random>
+URL=https://your-domain.example/api/v1/
+ROOT_ORIGIN=https://your-domain.example
+FRONTEND_URL=https://your-domain.example/
 ```
+
+Zone servers have multiplicity 0..∞ and register themselves with Uro at startup — no zone list is required in `.env`. See `multiplayer-fabric-hosting/.env.example` for the full variable reference.
 
 ### Start
 
@@ -66,11 +56,11 @@ mix phx.server
 ```
 
 ```sh
-export DATABASE_URL="postgresql://vsekai:vsekai@localhost:26257/vsekai?sslmode=disable"
+export DATABASE_URL="postgresql://root@localhost:26257/vsekai?sslmode=disable"
 export AWS_S3_BUCKET=uro-uploads
 export AWS_S3_ENDPOINT=http://localhost:7070
-export AWS_ACCESS_KEY_ID=minioadmin
-export AWS_SECRET_ACCESS_KEY=minioadmin
+export AWS_ACCESS_KEY_ID=<your-key>
+export AWS_SECRET_ACCESS_KEY=<your-secret>
 ```
 
 ## Architecture and design
