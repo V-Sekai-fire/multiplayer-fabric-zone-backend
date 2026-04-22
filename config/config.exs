@@ -71,13 +71,8 @@ config :uro, Uro.Repo,
   url:
     Helpers.get_env(
       "DATABASE_URL",
-      "postgresql://vsekai:vsekai@database:26257/vsekai?sslmode=disable"
+      "postgresql://root@database:26257/vsekai?sslmode=disable"
     ),
-  username: "vsekai",
-  password: "vsekai",
-  hostname: "localhost",
-  port: 26257,
-  database: "vsekai",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
