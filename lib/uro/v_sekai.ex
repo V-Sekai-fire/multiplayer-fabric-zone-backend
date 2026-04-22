@@ -23,7 +23,7 @@ defmodule Uro.VSekai do
     stale_timestamp =
       DateTime.add(DateTime.utc_now(), -zone_freshness_time_in_seconds(), :second)
 
-    Repo.all(from z in Zone, where: z.updated_at > ^stale_timestamp, preload: [:user])
+    Repo.all(from z in Zone, where: z.last_put_at > ^stale_timestamp, preload: [:user])
   end
 
   def get_zone!(id) do
@@ -44,6 +44,7 @@ defmodule Uro.VSekai do
   def update_zone(%Zone{} = zone, attrs) do
     zone
     |> Zone.changeset(attrs)
+    |> Ecto.Changeset.put_change(:last_put_at, DateTime.utc_now())
     |> Repo.update(force: true)
   end
 

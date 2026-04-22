@@ -4,9 +4,14 @@ defmodule Uro.VSekai.ZoneJanitor do
   @moduledoc """
   GenServer that culls stale zone records from CockroachDB.
 
-  Zone servers send `PUT /shards/:id` heartbeats every ~25 s, which updates
-  the row's `updated_at` column. This GenServer wakes periodically and deletes
-  any row whose `updated_at` has not been refreshed within the staleness window.
+  Zone servers send `PUT /shards/:id` heartbeats every ~25 s. Each PUT sets
+  `last_put_at` to the current time. This GenServer wakes periodically and
+  deletes any row whose `last_put_at` has not been refreshed within the
+  staleness window.
+
+  `last_put_at` is set only by explicit PUT calls from the zone server process.
+  Phoenix's own heartbeat timer can touch `updated_at` after disconnect; using
+  `last_put_at` prevents those stale heartbeats from keeping dead zones alive.
 
   ## Configuration
 
@@ -20,12 +25,12 @@ defmodule Uro.VSekai.ZoneJanitor do
   ## Freshness convention
 
   `Uro.VSekai.list_fresh_zones/0` applies a separate, tighter filter —
-  it returns only zones whose `updated_at` is within the last 30 seconds:
+  it returns only zones whose `last_put_at` is within the last 30 seconds:
 
   ```elixir
   def list_fresh_zones do
     cutoff = DateTime.utc_now() |> DateTime.add(-30, :second)
-    from(z in Zone, where: z.updated_at > ^cutoff) |> Repo.all()
+    from(z in Zone, where: z.last_put_at > ^cutoff) |> Repo.all()
   end
   ```
 
@@ -59,7 +64,7 @@ defmodule Uro.VSekai.ZoneJanitor do
     query =
       from z in "zones",
         where:
-          z.updated_at >
+          z.last_put_at <
             from_now(^stale_zone_cutoff[:amount], ^stale_zone_cutoff[:calendar_type]),
         select: z.id
 

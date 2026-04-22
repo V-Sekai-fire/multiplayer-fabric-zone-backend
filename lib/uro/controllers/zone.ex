@@ -34,9 +34,11 @@ defmodule Uro.ZoneController do
 
   ## Cloudflare DNS requirement
 
-  `zone-700a.chibifire.com` **must** have the orange cloud disabled
-  (DNS-only). Cloudflare cannot proxy QUIC/UDP. The A record must point
-  directly to the host machine.
+  Zone server hostnames currently use DNS-only (orange cloud disabled) because
+  the standard Cloudflare proxy cannot forward QUIC/UDP. Cloudflare's
+  MASQUE-based proxy mode (2025) may pass UDP datagrams transparently;
+  compatibility with zone server QUIC traffic is under evaluation. Until that
+  test completes, the A record must point directly to the host machine.
 
   ```sh
   # Verify DNS is not proxied

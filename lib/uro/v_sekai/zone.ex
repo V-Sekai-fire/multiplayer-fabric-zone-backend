@@ -30,6 +30,7 @@ defmodule Uro.VSekai.Zone do
     field(:current_users, :integer, default: 0)
     field(:max_users, :integer, default: 32)
     field(:cert_hash, :string)
+    field(:last_put_at, :utc_datetime_usec)
 
     timestamps()
   end
