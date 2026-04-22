@@ -54,7 +54,6 @@ defmodule Uro.MixProject do
       {:phoenix_live_reload, "~> 1.5", only: :dev},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:gettext, "~> 0.18"},
-      {:hackney, "~> 1.17"},
       {:httpoison, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:joken, "~> 2.6"},
