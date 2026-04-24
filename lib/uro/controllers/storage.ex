@@ -385,21 +385,47 @@ defmodule Uro.StorageController do
     ]
   )
 
-  def bake(conn, %{"id" => id, "baked_url" => baked_url}) do
+  # Baker callback: accept either a pre-formed baked_url OR raw caibx_data
+  # (base64). When caibx_data is supplied, zone-backend stores the index in
+  # S3 at zone-chunks/<id>.caibx and constructs the baked_url automatically.
+  def bake(conn, %{"id" => id} = params) do
     case SharedContent.get_shared_file!(id) do
       %Uro.SharedContent.SharedFile{} = f ->
-        case SharedContent.set_baked_url(f, baked_url) do
-          {:ok, updated} ->
-            json(conn, %{data: %{id: to_string(updated.id)}})
-
-          {:error, changeset} ->
-            {:error, changeset}
+        with {:ok, baked_url} <- resolve_baked_url(id, params),
+             {:ok, updated} <- SharedContent.set_baked_url(f, baked_url) do
+          json(conn, %{data: %{id: to_string(updated.id)}})
+        else
+          {:error, reason} -> {:error, reason}
         end
 
       _ ->
         conn |> put_status(404) |> json(%{error: "not found"})
     end
   end
+
+  # Store raw .caibx bytes in S3 and return the URL, or pass through baked_url.
+  defp resolve_baked_url(id, %{"caibx_data" => b64}) do
+    case Base.decode64(b64) do
+      {:ok, caibx_bytes} ->
+        bucket = Application.get_env(:aria_storage, :waffle_bucket, "zone-chunks")
+        key = "#{id}.caibx"
+        endpoint = System.get_env("AWS_S3_ENDPOINT", "http://versitygw:7070")
+
+        case ExAws.S3.put_object(bucket, key, caibx_bytes,
+               content_type: "application/octet-stream"
+             )
+             |> ExAws.request() do
+          {:ok, _} -> {:ok, "#{endpoint}/#{bucket}/#{key}"}
+          {:error, reason} -> {:error, {:s3_put_failed, reason}}
+        end
+
+      :error ->
+        {:error, :invalid_base64}
+    end
+  end
+
+  defp resolve_baked_url(_id, %{"baked_url" => baked_url}), do: {:ok, baked_url}
+  defp resolve_baked_url(_id, _), do: {:error, :missing_baked_url_or_caibx_data}
 
   def delete(conn, %{"id" => id}) do
     case SharedContent.get_shared_file!(id) do
