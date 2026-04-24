@@ -181,6 +181,11 @@ config :waffle,
 # In production, Waffle.Storage.S3 is configured in prod.exs using AWS_* env vars.
 config :aria_storage, :waffle_bucket, System.get_env("CHUNK_BUCKET", "zone-chunks")
 
+# aria-storage uses SQLite for internal chunk metadata.
+# zone-backend stores the file under its priv directory.
+config :aria_storage, AriaStorage.Repo,
+  database: System.get_env("ARIA_STORAGE_DB", "/app/priv/aria_storage.db")
+
 import_config "#{Mix.env()}.exs"
 
 if Mix.env() == "dev" do
