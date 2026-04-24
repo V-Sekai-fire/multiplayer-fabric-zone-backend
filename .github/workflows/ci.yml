@@ -45,8 +45,9 @@ jobs:
         run: |
           mkdir -p /tmp/crdb-certs
           docker run --rm --user 0:0 \
+            --entrypoint /bin/sh \
             -v /tmp/crdb-certs:/certs \
-            ghcr.io/v-sekai/cockroach:latest /bin/sh -c "
+            ghcr.io/v-sekai/cockroach:latest -c "
               cockroach cert create-ca --certs-dir=/certs --ca-key=/certs/ca.key --allow-ca-key-reuse --lifetime=87600h
               cockroach cert create-node localhost crdb 127.0.0.1 ::1 --certs-dir=/certs --ca-key=/certs/ca.key --lifetime=87600h
               cockroach cert create-client root --certs-dir=/certs --ca-key=/certs/ca.key --lifetime=87600h
