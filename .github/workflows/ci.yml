@@ -38,22 +38,20 @@ jobs:
           key: ${{ runner.os }}-zone-backend-mix-${{ hashFiles('mix.lock') }}
           restore-keys: ${{ runner.os }}-zone-backend-mix-
 
-      - name: Install CockroachDB
+      - name: Start CockroachDB
         run: |
-          curl -fsSL https://binaries.cockroachdb.com/cockroach-v23.2.3.linux-amd64.tgz | tar xz
-          sudo cp cockroach-v23.2.3.linux-amd64/cockroach /usr/local/bin/
-          cockroach version
-
-      - name: Start CockroachDB (single-node insecure)
-        run: |
-          cockroach start-single-node --insecure --background \
-            --listen-addr=localhost:26257 --http-addr=localhost:8080
-          until cockroach sql --insecure --execute="SELECT 1" 2>/dev/null; do
+          docker run -d --name crdb \
+            -p 26257:26257 -p 8080:8080 \
+            ghcr.io/v-sekai/cockroach:latest \
+            start-single-node --insecure \
+            --listen-addr=0.0.0.0:26257 \
+            --http-addr=0.0.0.0:8080
+          until docker exec crdb cockroach sql --insecure -e "SELECT 1" 2>/dev/null; do
             sleep 1
           done
 
       - name: Create test database
-        run: cockroach sql --insecure --execute="CREATE DATABASE IF NOT EXISTS vsekai_test;"
+        run: docker exec crdb cockroach sql --insecure -e "CREATE DATABASE IF NOT EXISTS vsekai_test;"
 
       - name: Install dependencies
         run: mix deps.get
