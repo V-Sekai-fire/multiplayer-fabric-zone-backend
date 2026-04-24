@@ -122,6 +122,12 @@ defmodule Uro.Router do
     get("/", Uro.AdminController, :status)
   end
 
+  # Content-addressed chunk server — replaces the desync container.
+  # Caddy routes /chunks/* here; GET/HEAD are public, PUT is internal (baker).
+  scope "/chunks" do
+    forward "/", AriaStorage.ChunkServerPlug, writeable: true
+  end
+
   scope "/storage" do
     scope "/tag" do
       get "/:tag", Uro.StorageController, :index_by_tag

@@ -177,6 +177,10 @@ config :waffle,
 
 # storage_dir: "uploads"
 
+# aria-storage chunk bucket — served by AriaStorage.ChunkServerPlug at /chunks/*.
+# In production, Waffle.Storage.S3 is configured in prod.exs using AWS_* env vars.
+config :aria_storage, :waffle_bucket, System.get_env("CHUNK_BUCKET", "zone-chunks")
+
 import_config "#{Mix.env()}.exs"
 
 if Mix.env() == "dev" do

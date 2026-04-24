@@ -47,7 +47,7 @@ defmodule Uro.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_live_view, "~> 0.20.3"},
       {:phoenix_view, "~> 2.0"},
-      {:ecto_sql, "~> 3.11"},
+      {:ecto_sql, "~> 3.13"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
       {:cors_plug, "~> 3.0"},
@@ -73,9 +73,10 @@ defmodule Uro.MixProject do
       {:ecto_commons, "~> 0.3.4"},
       {:swoosh, "~> 1.3"},
       {:hammer, "~> 6.0"},
-      {:scrivener_ecto, "~> 2.7"},
+      {:scrivener_ecto, "~> 3.1"},
       {:ex_marcel, "~> 0.1.0"},
-      {:taskweft, github: "V-Sekai-fire/multiplayer-fabric-taskweft"}
+      {:taskweft, github: "V-Sekai-fire/multiplayer-fabric-taskweft"},
+      {:aria_storage, github: "V-Sekai-fire/aria-storage"}
     ]
   end
 
