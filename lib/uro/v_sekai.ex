@@ -19,6 +19,7 @@ defmodule Uro.VSekai do
     |> Repo.preload(user: [:user])
   end
 
+  # Unauthenticated: public zones only.
   def list_fresh_zones do
     stale_timestamp =
       DateTime.add(DateTime.utc_now(), -zone_freshness_time_in_seconds(), :second)
@@ -30,6 +31,9 @@ defmodule Uro.VSekai do
     )
   end
 
+  # Authenticated: public zones + zones this user owns.
+  # Private zones the user was invited to are accessed via direct URL; CAN_ENTER
+  # is checked at WebTransport connect time by the zone server, not here.
   def list_fresh_zones(user_id: user_id) do
     stale_timestamp =
       DateTime.add(DateTime.utc_now(), -zone_freshness_time_in_seconds(), :second)
@@ -39,6 +43,24 @@ defmodule Uro.VSekai do
         where: z.last_put_at > ^stale_timestamp and (z.public == true or z.user_id == ^user_id),
         preload: [:user]
     )
+  end
+
+  @doc """
+  Check whether `player_id` may enter `zone` using the ReBAC CAN_ENTER relation.
+  Public zones always admit entry. Private zones require an explicit CAN_ENTER
+  edge (or a chain: OWNS implies CAN_ENTER).
+
+  Called at WebTransport connect time — not at listing time.
+  """
+  def can_enter_zone?(%Zone{public: true}, _player_id), do: true
+
+  def can_enter_zone?(%Zone{} = zone, player_id) do
+    graph =
+      Taskweft.ReBAC.new_graph()
+      |> Taskweft.ReBAC.add_edge(to_string(zone.user_id), to_string(zone.id), "OWNS")
+      |> Taskweft.ReBAC.add_edge(to_string(zone.user_id), to_string(zone.id), "CAN_ENTER")
+
+    Taskweft.ReBAC.check_rel(graph, to_string(player_id), "CAN_ENTER", to_string(zone.id))
   end
 
   def get_zone!(id) do
