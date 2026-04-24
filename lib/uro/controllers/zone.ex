@@ -186,7 +186,7 @@ defmodule Uro.ZoneController do
     "authority_model" => %{
       "algorithm" => "hilbert3D(pos)",
       "description" =>
-        "The zone whose Hilbert curve range contains hilbert3D(pos) is authoritative for any entity at that position. Authority is the only zone that executes CMD_INSTANCE_ASSET. The 3D Hilbert curve is formally proved in multiplayer-fabric-predictive-bvh/PredictiveBVH.lean; the Elixir port lives in multiplayer-fabric-deploy/lib/multiplayer_fabric_deploy/hilbert_curve.ex.",
+        "The zone whose Hilbert curve range contains hilbert3D(pos) is authoritative for any entity at that position. Authority is the only zone that executes CMD_INSTANCE_ASSET. The 3D Hilbert curve is formally proved in multiplayer-fabric-predictive-bvh/PredictiveBVH.lean.",
       "interest_management" =>
         "Neighbouring zones within AOI_CELLS receive a CH_INTEREST ghost — they do not re-fetch or re-instance. Interest management bounds are proved in multiplayer-fabric-predictive-bvh."
     },
