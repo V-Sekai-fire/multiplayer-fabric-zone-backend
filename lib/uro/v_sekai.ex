@@ -23,7 +23,22 @@ defmodule Uro.VSekai do
     stale_timestamp =
       DateTime.add(DateTime.utc_now(), -zone_freshness_time_in_seconds(), :second)
 
-    Repo.all(from z in Zone, where: z.last_put_at > ^stale_timestamp, preload: [:user])
+    Repo.all(
+      from z in Zone,
+        where: z.last_put_at > ^stale_timestamp and z.public == true,
+        preload: [:user]
+    )
+  end
+
+  def list_fresh_zones(user_id: user_id) do
+    stale_timestamp =
+      DateTime.add(DateTime.utc_now(), -zone_freshness_time_in_seconds(), :second)
+
+    Repo.all(
+      from z in Zone,
+        where: z.last_put_at > ^stale_timestamp and (z.public == true or z.user_id == ^user_id),
+        preload: [:user]
+    )
   end
 
   def get_zone!(id) do

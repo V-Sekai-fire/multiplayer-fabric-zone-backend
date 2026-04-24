@@ -31,6 +31,8 @@ defmodule Uro.VSekai.Zone do
     field(:max_users, :integer, default: 32)
     field(:cert_hash, :string)
     field(:last_put_at, :utc_datetime_usec)
+    field(:status, :string, default: "public")
+    field(:public, :boolean, default: true)
 
     timestamps()
   end
@@ -65,6 +67,8 @@ defmodule Uro.VSekai.Zone do
       map: to_string(zone.map),
       name: to_string(zone.name),
       cert_hash: zone.cert_hash || "",
+      status: zone.status || "public",
+      public: zone.public,
       desync_index_url: Uro.VSekai.get_desync_url_for_map(zone.map)
     }
   end
@@ -80,7 +84,9 @@ defmodule Uro.VSekai.Zone do
       :name,
       :current_users,
       :max_users,
-      :cert_hash
+      :cert_hash,
+      :status,
+      :public
     ])
     |> validate_required([:address, :port, :map, :name])
   end
