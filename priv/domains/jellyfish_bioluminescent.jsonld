@@ -1,0 +1,56 @@
+{
+  "@context": "https://taskweft.v-sekai.org/domain/v1",
+  "@type": "TwDomain",
+  "species": "jellyfish_bioluminescent",
+
+  "state": {
+    "location": "open_water",
+    "threat_nearby": false,
+    "light_level": "dim",
+    "pulse_cooldown": 0
+  },
+
+  "tasks": {
+    "behave": [
+      {
+        "method": "flee",
+        "precond": { "threat_nearby": true },
+        "subtasks": ["flee_predator", "recover"]
+      },
+      {
+        "method": "seek_light",
+        "precond": { "light_level": "bright" },
+        "requires_capability": "BIOLUMINESCENT",
+        "subtasks": ["drift_toward_light", "pulse"]
+      },
+      {
+        "method": "idle",
+        "precond": {},
+        "subtasks": ["drift_current"]
+      }
+    ]
+  },
+
+  "actions": {
+    "flee_predator": {
+      "duration": "PT2S",
+      "effects": { "location": "shelter" }
+    },
+    "recover": {
+      "duration": "PT5S",
+      "effects": { "threat_nearby": false }
+    },
+    "drift_toward_light": {
+      "duration": "PT3S",
+      "effects": { "location": "light_source" }
+    },
+    "pulse": {
+      "duration": "PT1S",
+      "effects": { "pulse_cooldown": 3 }
+    },
+    "drift_current": {
+      "duration": "PT4S",
+      "effects": {}
+    }
+  }
+}
