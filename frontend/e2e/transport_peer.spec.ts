@@ -94,7 +94,7 @@ test("each shard record has the fields required by FabricMMOGTransportPeer", asy
 // Phoenix backend. endpoint.ex has `socket "/socket", Uro.UserSocket` but
 // the production routing is not wired. See TODO: "Wire /socket/websocket
 // through Next.js/Cloudflare proxy to Phoenix backend".
-test.skip("Phoenix socket /socket/websocket state machine reaches OPEN or CLOSED", async ({
+test("Phoenix socket /socket/websocket state machine reaches OPEN or CLOSED", async ({
   page,
 }) => {
   const origin = process.env.API_ORIGIN ?? "https://hub-700a.chibifire.com";
