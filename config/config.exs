@@ -34,7 +34,7 @@ config :hammer,
 
 url =
   "URL"
-  |> get_env.("https://vsekai.local/api/v1/")
+  |> get_env.("https://vsekai.local/")
   |> URI.new!()
 
 root_origin =
