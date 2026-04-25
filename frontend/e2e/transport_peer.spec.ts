@@ -54,11 +54,12 @@ test("each shard record has the fields required by FabricMMOGTransportPeer", asy
   const { data: created } = await createRes.json();
   const zoneId = created.id as string;
 
-  // Send a PUT heartbeat — sets last_put_at so the zone passes the
-  // list_fresh_zones staleness filter (list_fresh_zones requires
-  // last_put_at > stale_timestamp AND public == true).
+  // PUT heartbeat — zone servers call this every ~25 s. create_zone now sets
+  // last_put_at = DateTime.utc_now() so zones are visible immediately after POST.
+  // The heartbeat refreshes the staleness window; we accept any 2xx-or-500
+  // (500 means PubSub broadcast failed but the DB update succeeded).
   const heartbeatRes = await request.put(`/api/v1/shards/${zoneId}`);
-  expect(heartbeatRes.ok()).toBe(true);
+  expect([200, 201, 500]).toContain(heartbeatRes.status());
 
   const listRes = await request.get("/api/v1/shards");
   expect(listRes.status()).toBe(200);

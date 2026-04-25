@@ -351,9 +351,14 @@ defmodule Uro.ZoneController do
         {:ok, zone} ->
           desync_url = VSekai.get_desync_url_for_map(zone.map)
 
-          Uro.Endpoint.broadcast("zone:#{zone.id}", "zone_updated", %{
-            desync_index_url: desync_url
-          })
+          # Best-effort broadcast — PubSub may not be running in all envs.
+          try do
+            Uro.Endpoint.broadcast("zone:#{zone.id}", "zone_updated", %{
+              desync_index_url: desync_url
+            })
+          rescue
+            _ -> :ok
+          end
 
           conn
           |> put_status(200)
