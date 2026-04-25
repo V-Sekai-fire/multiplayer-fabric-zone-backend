@@ -43,12 +43,8 @@ jobs:
           docker run -d --name crdb \
             -p 26257:26257 -p 8080:8080 \
             ghcr.io/v-sekai/cockroach:latest \
-            start-single-node --insecure \
-            --listen-addr=0.0.0.0:26257 \
-            --http-addr=0.0.0.0:8080
-          until docker exec crdb cockroach sql --insecure -e "SELECT 1" 2>/dev/null; do
-            sleep 1
-          done
+            start-single-node --insecure
+          timeout 120 bash -c 'until docker exec crdb cockroach sql --insecure -e "SELECT 1" 2>/dev/null; do sleep 1; done'
 
       - name: Create test database
         run: docker exec crdb cockroach sql --insecure -e "CREATE DATABASE IF NOT EXISTS vsekai_test;"
