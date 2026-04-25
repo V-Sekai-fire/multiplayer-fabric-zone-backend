@@ -75,6 +75,7 @@ defmodule Uro.VSekai do
 
     %Zone{}
     |> Zone.changeset(flattened_attrs)
+    |> Ecto.Changeset.put_change(:last_put_at, DateTime.utc_now())
     |> Repo.insert()
   end
 
