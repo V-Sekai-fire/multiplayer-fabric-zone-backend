@@ -107,7 +107,7 @@ defmodule Uro.VSekai do
   def get_desync_url_for_map(map_name) do
     SharedFile
     |> where([f], f.name == ^map_name and not is_nil(f.baked_url))
-    |> order_by([f], desc: f.inserted_at)
+    |> order_by([f], desc: f.created_at)
     |> limit(1)
     |> select([f], f.baked_url)
     |> Repo.one()
