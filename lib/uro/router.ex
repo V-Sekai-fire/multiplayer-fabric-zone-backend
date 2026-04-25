@@ -71,143 +71,144 @@ defmodule Uro.Router do
     end
   end
 
-  pipe_through([:api])
-
+  # Health — root level, no pipeline (monitoring tools hit this directly).
   get("/", Uro.HealthController, :index)
   get("/health", Uro.HealthController, :index)
 
-  get("/openapi", OpenApiSpex.Plug.RenderSpec, [])
-  get("/docs", Uro.OpenAPI.Viewer, [])
+  # All API routes under /api/v1.
+  scope "/api/v1" do
+    pipe_through([:api])
 
-  # User signup using apiKey client secret
-  scope "/registration" do
-    post "/", Uro.UserController, :create_client
-  end
+    get("/openapi", OpenApiSpex.Plug.RenderSpec, [])
+    get("/docs", Uro.OpenAPI.Viewer, [])
 
-  scope "/profile" do
-    pipe_through([:authenticated_user])
-    get("/", Uro.UserController, :show_current)
-  end
-
-  scope "/session" do
-    post("/", Uro.AuthenticationController, :login_client)
-
-    scope "/renew" do
-      post("/", Uro.AuthenticationController, :renew)
+    scope "/registration" do
+      post "/", Uro.UserController, :create_client
     end
 
-    pipe_through([:authenticated_user])
-
-    get("/", Uro.AuthenticationController, :get_current_session)
-    delete("/", Uro.AuthenticationController, :logout)
-  end
-
-  scope "/login" do
-    post("/", Uro.AuthenticationController, :login)
-
-    scope "/:provider" do
-      get("/", Uro.AuthenticationController, :login_with_provider)
-      get("/callback", Uro.AuthenticationController, :provider_callback)
-    end
-  end
-
-  resources("/avatars", Uro.AvatarController, only: [:index, :show])
-  resources("/maps", Uro.MapController, only: [:index, :show])
-
-  resources("/shards", Uro.ZoneController, only: [:index, :create, :update, :delete])
-
-  scope "/admin" do
-    pipe_through([:authenticated_admin])
-
-    get("/", Uro.AdminController, :status)
-  end
-
-  # Content-addressed chunk server — replaces the desync container.
-  # Caddy routes /chunks/* here; GET/HEAD are public, PUT is internal (baker).
-  scope "/chunks" do
-    forward "/", AriaStorage.ChunkServerPlug, writeable: true
-  end
-
-  scope "/storage" do
-    scope "/tag" do
-      get "/:tag", Uro.StorageController, :index_by_tag
+    scope "/profile" do
+      pipe_through([:authenticated_user])
+      get("/", Uro.UserController, :show_current)
     end
 
-    get "/:id", Uro.StorageController, :show
-    post "/:id/manifest", Uro.StorageController, :manifest
+    scope "/session" do
+      post("/", Uro.AuthenticationController, :login_client)
 
-    ################## Auth ##################
-    pipe_through([:authenticated_shared_file])
+      scope "/renew" do
+        post("/", Uro.AuthenticationController, :renew)
+      end
 
-    get "/", Uro.StorageController, :index
-    post "/", Uro.StorageController, :create
-    put "/:id", Uro.StorageController, :update
-    delete "/:id", Uro.StorageController, :delete
-    post "/:id/bake", Uro.StorageController, :bake
-  end
+      pipe_through([:authenticated_user])
 
-  scope "/users" do
-    post "/", Uro.UserController, :create
-
-    scope "/" do
-      pipe_through([:authenticated])
-      get "/", Uro.UserController, :index
+      get("/", Uro.AuthenticationController, :get_current_session)
+      delete("/", Uro.AuthenticationController, :logout)
     end
 
-    scope "/:user_id" do
-      get "/", Uro.UserController, :show
-      post "/email", Uro.UserController, :confirm_email
+    scope "/login" do
+      post("/", Uro.AuthenticationController, :login)
+
+      scope "/:provider" do
+        get("/", Uro.AuthenticationController, :login_with_provider)
+        get("/callback", Uro.AuthenticationController, :provider_callback)
+      end
+    end
+
+    resources("/avatars", Uro.AvatarController, only: [:index, :show])
+    resources("/maps", Uro.MapController, only: [:index, :show])
+
+    resources("/shards", Uro.ZoneController, only: [:index, :create, :update, :delete])
+
+    scope "/admin" do
+      pipe_through([:authenticated_admin])
+
+      get("/", Uro.AdminController, :status)
+    end
+
+    scope "/storage" do
+      scope "/tag" do
+        get "/:tag", Uro.StorageController, :index_by_tag
+      end
+
+      get "/:id", Uro.StorageController, :show
+      post "/:id/manifest", Uro.StorageController, :manifest
+
+      pipe_through([:authenticated_shared_file])
+
+      get "/", Uro.StorageController, :index
+      post "/", Uro.StorageController, :create
+      put "/:id", Uro.StorageController, :update
+      delete "/:id", Uro.StorageController, :delete
+      post "/:id/bake", Uro.StorageController, :bake
+    end
+
+    scope "/users" do
+      post "/", Uro.UserController, :create
 
       scope "/" do
         pipe_through([:authenticated])
+        get "/", Uro.UserController, :index
+      end
 
-        patch "/", Uro.UserController, :update
+      scope "/:user_id" do
+        get "/", Uro.UserController, :show
+        post "/email", Uro.UserController, :confirm_email
 
-        put "/email", Uro.UserController, :update_email
-        patch "/email", Uro.UserController, :resend_confirmation_email
+        scope "/" do
+          pipe_through([:authenticated])
 
-        resources("/friend", Uro.FriendController,
-          singleton: true,
-          only: [:show, :create, :delete]
-        )
+          patch "/", Uro.UserController, :update
+
+          put "/email", Uro.UserController, :update_email
+          patch "/email", Uro.UserController, :resend_confirmation_email
+
+          resources("/friend", Uro.FriendController,
+            singleton: true,
+            only: [:show, :create, :delete]
+          )
+        end
+      end
+    end
+
+    scope "/dashboard" do
+      pipe_through([:authenticated_user])
+
+      get("/", Uro.AuthenticationController, :get_current_session)
+      delete("/", Uro.AuthenticationController, :logout)
+
+      scope "/avatars" do
+        pipe_through([:dashboard_avatars])
+
+        get "/", Uro.AvatarController, :index_uploads
+        get "/:id", Uro.AvatarController, :show_upload
+        post "/", Uro.AvatarController, :create
+        put "/:id", Uro.AvatarController, :update
+        delete "/:id", Uro.AvatarController, :delete
+      end
+
+      scope "/maps" do
+        pipe_through([:dashboard_maps])
+
+        get "/", Uro.MapController, :index_uploads
+        get "/:id", Uro.MapController, :show_upload
+        post "/", Uro.MapController, :create
+        put "/:id", Uro.MapController, :update
+        delete "/:id", Uro.MapController, :delete
+      end
+
+      scope "/props" do
+        pipe_through([:dashboard_props])
+
+        get "/", Uro.PropController, :index_uploads
+        get "/:id", Uro.PropController, :show_upload
+        post "/", Uro.PropController, :create
+        put "/:id", Uro.PropController, :update
+        delete "/:id", Uro.PropController, :delete
       end
     end
   end
 
-  scope "/dashboard" do
-    pipe_through([:authenticated_user])
-
-    get("/", Uro.AuthenticationController, :get_current_session)
-    delete("/", Uro.AuthenticationController, :logout)
-
-    scope "/avatars" do
-      pipe_through([:dashboard_avatars])
-
-      get "/", Uro.AvatarController, :index_uploads
-      get "/:id", Uro.AvatarController, :show_upload
-      post "/", Uro.AvatarController, :create
-      put "/:id", Uro.AvatarController, :update
-      delete "/:id", Uro.AvatarController, :delete
-    end
-
-    scope "/maps" do
-      pipe_through([:dashboard_maps])
-
-      get "/", Uro.MapController, :index_uploads
-      get "/:id", Uro.MapController, :show_upload
-      post "/", Uro.MapController, :create
-      put "/:id", Uro.MapController, :update
-      delete "/:id", Uro.MapController, :delete
-    end
-
-    scope "/props" do
-      pipe_through([:dashboard_props])
-
-      get "/", Uro.PropController, :index_uploads
-      get "/:id", Uro.PropController, :show_upload
-      post "/", Uro.PropController, :create
-      put "/:id", Uro.PropController, :update
-      delete "/:id", Uro.PropController, :delete
-    end
+  # Content-addressed chunk server — outside /api/v1, served directly by Caddy.
+  scope "/chunks" do
+    forward "/", AriaStorage.ChunkServerPlug, writeable: true
   end
 end

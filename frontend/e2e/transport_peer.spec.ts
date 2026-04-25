@@ -121,7 +121,7 @@ test("OpenAPI spec lists /shards GET operation", async ({ request }) => {
   expect(res.status()).toBe(200);
 
   const spec = await res.json();
-  const shardsGet = spec?.paths?.["/shards"]?.get;
+  const shardsGet = spec?.paths?.["/api/v1/shards"]?.get;
   expect(shardsGet).toBeDefined();
   expect(shardsGet.operationId).toBe("listZones");
 
