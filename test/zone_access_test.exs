@@ -32,8 +32,23 @@ defmodule Uro.ZoneAccessTest do
 
   describe "list_fresh_zones/0" do
     test "returns only public zones" do
-      fresh_zone(%{public: true, status: "public", address: "1.2.3.4", port: 7443, map: "map-pub", name: "pub"})
-      fresh_zone(%{public: false, status: "private", address: "1.2.3.5", port: 7443, map: "map-priv", name: "priv"})
+      fresh_zone(%{
+        public: true,
+        status: "public",
+        address: "1.2.3.4",
+        port: 7443,
+        map: "map-pub",
+        name: "pub"
+      })
+
+      fresh_zone(%{
+        public: false,
+        status: "private",
+        address: "1.2.3.5",
+        port: 7443,
+        map: "map-priv",
+        name: "priv"
+      })
 
       zones = VSekai.list_fresh_zones()
       assert Enum.all?(zones, & &1.public)
@@ -43,14 +58,42 @@ defmodule Uro.ZoneAccessTest do
   describe "list_fresh_zones/1 with user_id" do
     test "returns public zones and owner private zones" do
       import Ecto.Changeset
-      me_user    = Repo.insert!(%Uro.Accounts.User{} |> cast(%{email: "me@test.test"},    [:email]))
-      other_user = Repo.insert!(%Uro.Accounts.User{} |> cast(%{email: "other@test.test"}, [:email]))
-      me    = me_user.id
+      me_user = Repo.insert!(%Uro.Accounts.User{} |> cast(%{email: "me@test.test"}, [:email]))
+
+      other_user =
+        Repo.insert!(%Uro.Accounts.User{} |> cast(%{email: "other@test.test"}, [:email]))
+
+      me = me_user.id
       other = other_user.id
 
-      fresh_zone(%{public: true,  status: "public",  address: "1.2.3.4", port: 7443, map: "map-pub",   name: "pub"})
-      fresh_zone(%{public: false, status: "private", address: "1.2.3.5", port: 7443, map: "map-mine",  name: "mine",  user_id: me})
-      fresh_zone(%{public: false, status: "private", address: "1.2.3.6", port: 7443, map: "map-other", name: "other", user_id: other})
+      fresh_zone(%{
+        public: true,
+        status: "public",
+        address: "1.2.3.4",
+        port: 7443,
+        map: "map-pub",
+        name: "pub"
+      })
+
+      fresh_zone(%{
+        public: false,
+        status: "private",
+        address: "1.2.3.5",
+        port: 7443,
+        map: "map-mine",
+        name: "mine",
+        user_id: me
+      })
+
+      fresh_zone(%{
+        public: false,
+        status: "private",
+        address: "1.2.3.6",
+        port: 7443,
+        map: "map-other",
+        name: "other",
+        user_id: other
+      })
 
       zones = VSekai.list_fresh_zones(user_id: me)
       names = Enum.map(zones, & &1.name)
