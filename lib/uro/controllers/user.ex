@@ -156,12 +156,12 @@ defmodule Uro.UserController do
   )
 
   def create(conn, params) do
-    if Application.get_env(:uro, :registration_enabled, true) == false do
+    if System.get_env("REGISTRATION_ENABLED") == "true" do
+      do_create(conn, params)
+    else
       conn
       |> put_status(:forbidden)
       |> json(%{error: "registration_disabled", message: "Registration is not open."})
-    else
-      do_create(conn, params)
     end
   end
 
