@@ -31,6 +31,7 @@ RUN mix do deps.get, patch.exmarcel, deps.compile
 COPY config ./config
 COPY priv ./priv
 COPY lib ./lib
+COPY scripts ./scripts
 
 RUN mix do compile, phx.digest
 RUN mix uro.apigen
