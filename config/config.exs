@@ -71,7 +71,7 @@ config :uro, Uro.Repo,
   url:
     Helpers.get_env(
       "DATABASE_URL",
-      "postgresql://root@database:26257/vsekai?sslmode=disable"
+      "postgresql://gateway_writer@multiplayer-fabric-crdb.internal:26257/uro?sslmode=verify-full"
     ),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
