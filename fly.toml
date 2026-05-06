@@ -1,0 +1,30 @@
+app            = "multiplayer-fabric-uro"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  MIX_ENV    = "prod"
+  PORT       = "4000"
+  # CRDB SNI — must match the node cert SAN (see multiplayer-fabric-crdb/gen_crdb_certs.sh)
+  CRDB_CA_CERT    = ""   # overridden by secret
+  CRDB_CLIENT_CERT = ""
+  CRDB_CLIENT_KEY  = ""
+
+[http_service]
+  internal_port        = 4000
+  force_https          = true
+  auto_stop_machines   = true
+  auto_start_machines  = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type       = "connections"
+    soft_limit = 200
+    hard_limit = 250
+
+[[vm]]
+  memory   = "512mb"
+  cpu_kind = "shared"
+  cpus     = 1
