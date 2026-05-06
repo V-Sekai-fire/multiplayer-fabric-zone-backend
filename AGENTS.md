@@ -1,5 +1,65 @@
 # AGENTS.md — multiplayer-fabric-zone-backend
 
+Uro — Phoenix/Elixir backend for zone registration, asset management, and
+authentication. Deployed on Fly.io as `multiplayer-fabric-uro`.
+
+## Fly.io deployment
+
+| URL | Notes |
+|-----|-------|
+| `https://multiplayer-fabric-uro.fly.dev` | Fly default hostname |
+| `https://hub.chibifire.com` | Public alias (Cloudflare proxied) |
+| `https://hubaf2f.chibifire.com` | Machine-specific alias (MAC suffix af2f) |
+| `https://bake.chibifire.com` | Baker posts results here (same app) |
+
+**App name:** `multiplayer-fabric-uro` — `flyctl` commands use `--app multiplayer-fabric-uro`.
+
+### Required Fly secrets
+
+| Secret | Purpose |
+|--------|---------|
+| `DATABASE_URL` | `postgresql://gateway_writer@multiplayer-fabric-crdb.internal:26257/uro?sslmode=verify-full` |
+| `MIGRATION_DATABASE_URL` | `postgresql://gateway_admin@...` (DDL-capable) |
+| `CRDB_CA_CRT` | CA cert content (written to disk by scripts/fly-start.sh) |
+| `CRDB_CLIENT_WRITER_CRT` | gateway_writer client cert |
+| `CRDB_CLIENT_WRITER_KEY` | gateway_writer client key |
+| `CRDB_CLIENT_ADMIN_CRT` | gateway_admin client cert (for migrations) |
+| `CRDB_CLIENT_ADMIN_KEY` | gateway_admin client key |
+| `PHOENIX_KEY_BASE` | 64-byte secret key base |
+| `JOKEN_SIGNER` | JWT signing key |
+| `SIGNUP_API_KEY` | Client signup API key |
+
+### Database role separation (ReBAC)
+
+- `Uro.Repo.Migration` — connects as **gateway_admin** (DDL privilege: CREATE, ALTER, DROP)
+- `Uro.Repo` — connects as **gateway_writer** (DML only: SELECT, INSERT, UPDATE, DELETE)
+
+Migrations run at startup via `scripts/fly-start.sh` with the admin repo.
+The app serves requests via the writer repo.
+
+### Startup script
+
+`scripts/fly-start.sh`:
+1. Writes cert content from Fly secrets (`CRDB_CA_CRT` etc.) to `/tmp/crdb_certs/`
+2. Sets `CRDB_CA_CERT`, `CRDB_CLIENT_CERT`, `CRDB_CLIENT_KEY`, `CRDB_ADMIN_CERT`, `CRDB_ADMIN_KEY`
+3. Runs `mix ecto.migrate --repo Uro.Repo.Migration` (as gateway_admin)
+4. Starts `phx.server` (as gateway_writer)
+
+### Deploy
+
+```bash
+gh workflow run deploy.yml --repo V-Sekai-fire/multiplayer-fabric-zone-backend
+```
+
+### Known quirks
+
+- `Helpers.get_env/2` uses `@compile_phase?` baked at build time — env vars for
+  non-nil defaults must be set as Fly secrets, not inferred from the example values.
+- `socket_options: [:inet6]` is required — Fly `.internal` DNS returns IPv6 only.
+- `prepare: :unnamed` avoids statement-cache exhaustion on single-node CockroachDB.
+
+---
+
 Guidance for AI coding agents working in this submodule.
 
 ## Commit message style
