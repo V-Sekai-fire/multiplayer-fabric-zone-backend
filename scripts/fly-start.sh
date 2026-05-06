@@ -16,4 +16,5 @@ if [ -n "$CRDB_CA_CRT" ]; then
   export CRDB_CLIENT_KEY="$CERT_DIR/client.gateway_writer.key"
 fi
 
-exec iex -S mix do ecto.create, ecto.migrate, run priv/repo/test_seeds.exs, phx.server
+# Skip ecto.create — database is provisioned externally (gateway_writer lacks CREATEDB).
+exec iex -S mix do ecto.migrate, run priv/repo/test_seeds.exs, phx.server
