@@ -76,7 +76,10 @@ config :uro, Uro.Repo,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
+  prepare: :unnamed,
   migration_lock: false,
+  # Fly.io .internal DNS resolves to IPv6 only — inet6 is required for CockroachDB
+  socket_options: [:inet6],
   ssl: crdb_ssl
 
 config :uro, Uro.Endpoint,
