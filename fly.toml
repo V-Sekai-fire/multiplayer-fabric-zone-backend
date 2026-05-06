@@ -5,12 +5,15 @@ primary_region = "iad"
   dockerfile = "Dockerfile"
 
 [env]
-  MIX_ENV    = "prod"
-  PORT       = "4000"
-  # CRDB SNI — must match the node cert SAN (see multiplayer-fabric-crdb/gen_crdb_certs.sh)
-  CRDB_CA_CERT    = ""   # overridden by secret
-  CRDB_CLIENT_CERT = ""
-  CRDB_CLIENT_KEY  = ""
+  MIX_ENV = "prod"
+  PORT    = "4000"
+
+# Override the Dockerfile ENTRYPOINT so we can write CRDB certs to disk first.
+# scripts/fly-start.sh reads CRDB_CA_CRT / CRDB_CLIENT_WRITER_CRT / CRDB_CLIENT_WRITER_KEY
+# from Fly secrets, writes them to /tmp/crdb_certs/, sets CRDB_CA_CERT etc., then
+# starts the application.
+[processes]
+  app = "/bin/sh /app/scripts/fly-start.sh"
 
 [http_service]
   internal_port        = 4000
