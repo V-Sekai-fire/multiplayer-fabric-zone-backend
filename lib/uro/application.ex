@@ -13,6 +13,7 @@ defmodule Uro.Application do
         do: [],
         else: [
           Uro.Repo,
+          Uro.Repo.Migration,
           Uro.Endpoint,
           Uro.VSekai.ZoneJanitor,
           Uro.Pow.DetsCache,

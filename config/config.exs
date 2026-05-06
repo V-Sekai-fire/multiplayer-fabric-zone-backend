@@ -43,7 +43,7 @@ root_origin =
   |> URI.new!()
 
 config :uro,
-  ecto_repos: [Uro.Repo],
+  ecto_repos: [Uro.Repo, Uro.Repo.Migration],
   url: url,
   frontend_url:
     "FRONTEND_URL"
@@ -66,6 +66,22 @@ crdb_ssl =
       ]
   end
 
+crdb_admin_ssl =
+  case System.get_env("CRDB_CA_CERT") do
+    nil ->
+      false
+
+    ca ->
+      [
+        cacertfile: ca,
+        certfile: System.get_env("CRDB_ADMIN_CERT"),
+        keyfile: System.get_env("CRDB_ADMIN_KEY"),
+        verify: :verify_peer,
+        server_name_indication: ~c"crdb"
+      ]
+  end
+
+# DML repo — gateway_writer, no DDL privilege
 config :uro, Uro.Repo,
   adapter: Ecto.Adapters.Postgres,
   url:
@@ -78,9 +94,24 @@ config :uro, Uro.Repo,
   pool_size: 10,
   prepare: :unnamed,
   migration_lock: false,
-  # Fly.io .internal DNS resolves to IPv6 only — inet6 is required for CockroachDB
   socket_options: [:inet6],
   ssl: crdb_ssl
+
+# DDL repo — gateway_admin, used only for ecto.migrate.
+# Shares the same migration files as Uro.Repo (priv: "priv/repo").
+config :uro, Uro.Repo.Migration,
+  priv: "priv/repo",
+  adapter: Ecto.Adapters.Postgres,
+  url:
+    Helpers.get_env(
+      "MIGRATION_DATABASE_URL",
+      "postgresql://gateway_admin@multiplayer-fabric-crdb.internal:26257/uro?sslmode=verify-full"
+    ),
+  pool_size: 2,
+  prepare: :unnamed,
+  migration_lock: false,
+  socket_options: [:inet6],
+  ssl: crdb_admin_ssl
 
 config :uro, Uro.Endpoint,
   adapter: Bandit.PhoenixAdapter,
