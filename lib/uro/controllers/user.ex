@@ -156,6 +156,16 @@ defmodule Uro.UserController do
   )
 
   def create(conn, params) do
+    if Application.get_env(:uro, :registration_enabled, true) == false do
+      conn
+      |> put_status(:forbidden)
+      |> json(%{error: "registration_disabled", message: "Registration is not open."})
+    else
+      do_create(conn, params)
+    end
+  end
+
+  defp do_create(conn, params) do
     Repo.transaction(fn ->
       with {:ok, _} <- Turnstile.verify_captcha(conn),
            {:ok, user} <- Accounts.create(params),

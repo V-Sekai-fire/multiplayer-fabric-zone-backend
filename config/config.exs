@@ -44,6 +44,7 @@ root_origin =
 
 config :uro,
   ecto_repos: [Uro.Repo, Uro.Repo.Migration],
+  registration_enabled: System.get_env("REGISTRATION_ENABLED", "false") == "true",
   url: url,
   frontend_url:
     "FRONTEND_URL"
