@@ -97,8 +97,10 @@ config :uro, Uro.Repo,
   socket_options: [:inet6],
   ssl: crdb_ssl
 
-# DDL repo — gateway_admin, used only for ecto.migrate
+# DDL repo — gateway_admin, used only for ecto.migrate.
+# Shares the same migration files as Uro.Repo (priv: "priv/repo").
 config :uro, Uro.Repo.Migration,
+  priv: "priv/repo",
   adapter: Ecto.Adapters.Postgres,
   url:
     Helpers.get_env(
