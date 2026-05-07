@@ -8,6 +8,12 @@ defmodule Uro.Application do
   use Application
 
   def start(_type, _args) do
+    # Attach OpenTelemetry instrumentation to Phoenix + Ecto. Span exporting
+    # is configured via :opentelemetry / :opentelemetry_exporter in
+    # config/prod.exs.
+    OpentelemetryPhoenix.setup(adapter: :bandit)
+    OpentelemetryEcto.setup([:uro, :repo])
+
     children =
       if System.get_env("MINIMAL_START") == "true",
         do: [],
