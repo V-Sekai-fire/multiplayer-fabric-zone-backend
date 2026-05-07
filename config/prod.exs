@@ -26,3 +26,24 @@ config :ex_aws, :s3,
   scheme: "http://",
   host: System.get_env("VERSITYGW_HOST", "versitygw"),
   port: String.to_integer(System.get_env("VERSITYGW_PORT", "7070"))
+
+# OpenTelemetry: ship spans + logs to multiplayer-fabric-observability over
+# Fly's 6PN private network. Uses OTLP/HTTP (4318) which is simpler than
+# OTLP/gRPC over plain 6PN (no TLS overhead). Endpoint is overridable via
+# OTEL_EXPORTER_OTLP_ENDPOINT for local dev.
+otel_endpoint =
+  System.get_env("OTEL_EXPORTER_OTLP_ENDPOINT") ||
+    "http://multiplayer-fabric-observability.internal:4318"
+
+config :opentelemetry,
+  span_processor: :batch,
+  traces_exporter: :otlp,
+  resource: %{
+    "service.name" => "multiplayer-fabric-uro",
+    "service.version" => to_string(Application.spec(:uro, :vsn) || "0.0.0"),
+    "deployment.environment" => "fly-iad"
+  }
+
+config :opentelemetry_exporter,
+  otlp_protocol: :http_protobuf,
+  otlp_endpoint: otel_endpoint

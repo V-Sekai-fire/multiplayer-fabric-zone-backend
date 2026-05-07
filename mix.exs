@@ -28,7 +28,9 @@ defmodule Uro.MixProject do
         :email_checker,
         :mnesia,
         :scrivener_ecto,
-        :httpoison
+        :httpoison,
+        :opentelemetry_exporter,
+        :opentelemetry
       ]
     ]
   end
@@ -76,7 +78,14 @@ defmodule Uro.MixProject do
       {:scrivener_ecto, "~> 3.1"},
       {:ex_marcel, "~> 0.1.0"},
       {:taskweft, github: "V-Sekai-fire/multiplayer-fabric-taskweft"},
-      {:aria_storage, github: "V-Sekai-fire/aria-storage"}
+      {:aria_storage, github: "V-Sekai-fire/aria-storage"},
+
+      # OpenTelemetry — ships spans + logs to multiplayer-fabric-observability
+      {:opentelemetry, "~> 1.6"},
+      {:opentelemetry_api, "~> 1.4"},
+      {:opentelemetry_exporter, "~> 1.9"},
+      {:opentelemetry_phoenix, "~> 2.0"},
+      {:opentelemetry_ecto, "~> 1.2"}
     ]
   end
 
